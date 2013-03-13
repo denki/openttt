@@ -1,0 +1,360 @@
+available_languages=en:English,de:Deutsch
+
+;database.Qualifying
+en_group=Group
+de_group=Gruppe
+
+;database.Calculator
+en_rank=Rank
+de_rank=Platz
+
+en_number=No
+de_number=Nr
+
+;database.Game
+en_Start=Start
+de_Start=Beginn
+
+en_End=End
+de_End=Ende
+
+;database.Player
+en_nobody=nobody
+de_nobody=niemand
+
+en_surname=Surname
+de_surname=Nachname
+
+en_prename=Prename
+de_prename=Vorname
+
+en_club=Club
+de_club=Verein
+
+;gui.popups.ImportPlayers
+en_notInTable=Is not in table
+de_notInTable=Ist nicht in der Tabelle
+
+en_dataStartIdx=data start at row
+de_dataStartIdx=Daten beginnen in Zeile
+
+en_dataEndIdx=data and at row
+de_dataEndIdx=Daten enden in Zeile
+
+en_column=Column
+de_column=Spalte
+
+en_optional=optional
+de_optional=optional
+
+;gui.Preferences
+en_appearance=Appearance
+de_appearance=Erscheinung
+
+en_language=Language
+de_language=Sprache
+
+en_iconSize=Icon size
+de_iconSize=Icon Größe
+
+en_south=South
+de_south=Süd
+
+en_north=North
+de_north=Nord
+
+en_east=East
+de_east=Ost
+
+en_west=West
+de_west=West
+
+en_iconBarPosition=Position
+de_iconBarPosition=Position
+
+en_iconBar=Icon Bar
+de_iconBar=Icon Leiste
+
+;gui.components.StandartButtonPanel
+en_tooltip_new=Create new tournament
+de_tooltip_new=Ein neues Turnier erstellen
+
+en_tooltip_open=Open a tournament
+de_tooltip_open=Ein Turnier öffnen
+
+en_tooltip_save=Save the currently running tournament
+de_tooltip_save=Das momentan laufende Turnier speichern
+
+en_tooltip_saveas=Save the currently running tournament to specific place
+de_tooltip_saveas=Das momentan laufende Turnier an einem bestimmten Ort speichern
+
+en_tooltip_print_preview=Show preview
+de_tooltip_print_preview=Vorschau anzeigen
+
+en_tooltip_print=Print / show in browser
+de_tooltip_print=Drucken / im Browser anzeigen
+
+en_tooltip_clone=Clone currently running tournament
+de_tooltip_clone=Das momentan laufende Turnier clonen
+
+en_tooltip_back=Go to previous view
+de_tooltip_back=Zur vorherigen Ansicht gehen
+
+en_tooltip_properties=Show properties window
+de_tooltip_properties=Eigenschaften-Fenster anzeigen
+
+en_tooltip_next=Go to next view
+de_tooltip_next=Zur nächsten Ansicht gehen
+
+;gui.JStart
+en_recentlyOpened=Recently opened
+de_recentlyOpened=Zuletzt geöffnet
+
+;gui.popups.ImportPlayers
+en_importPlayers=Import players
+de_importPlayers=Spieler importieren
+
+;gui.Main
+en_openTTT=Open Table Tennis Tournament
+de_openTTT=Open Table Tennis Tournament
+
+en_unsavedChanges=There are unsaved changes. Do you want to exit anyway?
+de_unsavedChanges=Es gibt ungesicherte Änderungen. Soll das Programm trotzdem geschlossen werden?
+
+en_unsavedChangesShort=Unsaved changes
+de_unsavedChangesShort=Ungesicherte Änderungen
+
+en_file=File
+de_file=Datei
+
+en_new=New
+de_new=Neu
+
+en_newTournament=New Tournament
+de_newTournament=Neues Turnier
+
+en_newKOTemplate=New Knock Out Template
+de_newKOTemplate=Neues KO-Muster
+
+en_open=Open...
+de_open=Öffnen...
+
+en_importFromCsv=Import players...
+de_importFromCsv=Spieler importieren...
+
+en_save=Save
+de_save=Speichern
+
+en_saveas=Save as...
+de_saveas=Speichern unter...
+
+en_quit=Quit
+de_quit=Beenden
+
+en_tools=Tools
+de_tools=Werkzeuge
+
+en_openManipulator=Open Manipulator
+de_openManipulator=Manipulator öffnen
+
+en_openWatcher=Open Watcher
+de_openWatcher=Betrachter öffnen
+
+en_printGames=Group tables
+de_printGames=Gruppentabellen
+
+en_preferences=Preferences
+de_preferences=Einstellungen
+
+en_single=Single
+de_single=Einzel
+
+en_doubles=Double
+de_doubles=Doppel
+
+en_team2=Team (2 Players)
+de_team2=2er Mannschaft
+
+en_qualifying=Qualifying
+de_qualifying=Vorrunde
+
+en_knockOut=Knock Out
+de_knockOut=KO-Runde
+
+;gui.components.JTimeEstamination
+en_progress=Progress
+de_progress=Fortschritt
+
+en_totalGames=Total matches
+de_totalGames=Spiele gesamt
+
+en_finishedGames=Finished matches
+de_finishedGames=Spiele beendet
+
+en_started=Started
+de_started=Beginn
+
+en_estEnd=Estaminated end
+de_estEnd=Voraussichtliches Ende
+
+;gui.views.Preferences
+en_playerType=Player Type
+de_playerType=Spielertyp
+
+en_components=Components
+de_components=Bestandteile
+
+;gui.JTournamentPreferences
+en_single=Single
+de_single=Einzel
+
+en_pair=Pair
+de_pair=Paar
+
+;gui.JPlayers
+en_player=Player
+de_player=Spieler
+
+en_search=Search
+de_search=Suchen
+
+en_addPlayer=Add
+de_addPlayer=Hinzufügen
+
+en_delPlayer=Remove
+de_delPlayer=Entfernen
+
+en_addGroup=Add
+de_addGroup=Hinzufügen
+
+en_delGroup=Remove
+de_delGroup=Entfernen
+
+en_startQualifying=Start qualifying
+de_startQualifying=Vorrunde starten
+
+;gui.JQualifying
+en_prepared=Prepared
+de_prepared=Vorbereitung
+
+en_running=Running
+de_running=Laufend
+
+en_done=Done
+de_done=Fertig
+
+en_games=Matches
+de_games=Spiele
+
+en_ballsleftballsright=Points left,Points right
+de_ballsleftballsright=Bälle links,Bälle rechts
+
+en_breakGame=Break matches
+de_breakGame=Spiele unterbrechen
+
+en_continueGame=Correct matches
+de_continueGame=Spiele korrigieren
+
+en_clearSearch=Clear search
+de_clearSearch=Suchfeld leeren
+
+en_finishGame=End matches
+de_finishGame=Spiele beenden
+
+en_startGame=Start matches
+de_startGame=Spiele starten
+
+en_endQualifying=End Qualifying
+de_endQualifying=Qualifikation beenden
+
+;gui.JKnockOutBuilder
+en_to=to
+de_to=bis
+
+en_start=Start
+de_start=Starten
+
+en_import=Import from file
+de_import=Importieren aus Datei
+
+en_wrongGroups=Number of groups does not match.
+de_wrongGroups=Die Anzahl der Gruppen stimmt nicht überein.
+
+en_groups=Groups
+de_groups=Gruppen
+
+en_players=Players
+de_players=Players
+
+;gui.components.JGameCommander
+en_manipulator=Manipulator
+de_manipulator=Manipulator
+
+en_state=State
+de_state=Status
+
+en_versus=versus
+de_versus=gegen
+
+en_balls=Points
+de_balls=Bälle
+
+en_sentences=Games
+de_sentences=Sätze
+
+en_sentence=Game
+de_sentence=Satz
+
+en_refresh=Refresh
+de_refresh=Aktualisieren
+
+en_tooltip_tGame=<html>Games should be inserted here either<br>- as <b>full game</b> outcome where the points are separated by ",", ";" or ":" (e.g. 11,3 or 10,12) or<br>- as a <b>tendency</b> (e.g. -7, +2).</html>
+de_tooltip_tGame=<html>Sätze sollen hier entweder<br>- <b>vollständig</b> eingetragen werden, wobei die Punkte mit ",", ";" oder ":" getrennt werden (z.B. 11,3 oder 10,12), oder<br>- als <b>Tendenz</b> (z.B. -7 oder +2).</html>
+
+;gui.JQualifyingWatcher
+en_name=Name
+de_name=Name
+
+en_qualifyingWatcher=Qualifying
+de_qualifyingWatcher=Vorrunde
+
+en_print=Print
+de_print=Drucken
+
+;gui.JKnockOutWatcherWindow
+en_knockOutWatcher=Knock Out
+de_knockOutWatcher=KO-Runde
+
+en_rename=Rename
+de_rename=Umbenennen
+
+en_renameTo=Rename to
+de_renameTo=Umbenennen in
+
+;gui.JBrowser
+en_groupTables=Group tables
+de_groupTables=Gruppentabellen
+
+en_emptyTables=Empty tables
+de_emptyTables=Tabellen leeren
+
+en_fillTables=Fill tables
+de_fillTables=Tabellen ausfüllen
+
+;gui.JKnockOutPreBuilder
+en_preBuilder=Knock out preparation
+de_preBuilder=Knock Out Vorbereitung
+
+;gui.JRanking
+en_ranking=Ranking
+de_ranking=Plätze
+
+;gui.watcher.JPlayersPresence
+en_presence=Presence
+de_presence=Anwesenheit
+
+en_present=present
+de_present=anwes.
+
+en_paid=paid
+de_paid=bezahlt

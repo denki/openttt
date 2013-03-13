@@ -1,0 +1,356 @@
+package database.tournamentParts;
+
+import gui.Interaction;
+
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+
+import database.match.Match;
+import database.players.Double;
+import database.players.Player;
+import database.players.Single;
+import exceptions.InputFormatException;
+
+public class Tournament {
+	private static String SUFFIX = ".ott";
+	private KnockOut knockOut;
+	private Properties properties;
+	private Qualifying qualifying;
+	private int state;
+
+	public Tournament() {
+		properties = new Properties();
+		qualifying = new Qualifying(1);
+		state = 0;
+	}
+
+	public static Tournament loadTournament(String fileName) {
+		XStream xstream = new XStream(new DomDriver());
+		try {
+			String xml = Interaction.loadFile(fileName);
+			Tournament tournament = (Tournament) xstream.fromXML(xml);
+			return tournament;
+		} catch (IOException e) {
+			System.out
+					.println("WARNING: "
+							+ fileName
+							+ " is not of expected XML format. Trying the old binary one.");
+			ObjectInputStream objIn;
+			try {
+				objIn = new ObjectInputStream(new BufferedInputStream(
+						new FileInputStream(fileName)));
+				Tournament tournament = (database.tournamentParts.Tournament) objIn
+						.readObject();
+				objIn.close();
+				return tournament;
+			} catch (FileNotFoundException e1) {
+				System.out.println("ERROR: File " + fileName
+						+ " does not exist.");
+			} catch (IOException e1) {
+				System.out.println("ERROR: File " + fileName
+						+ " is not a OpenTTT file.");
+			} catch (ClassNotFoundException e2) {
+				System.out.println("ERROR: File " + fileName
+						+ " is not a OpenTTT file.");
+			}
+		}
+		return null;
+	}
+
+	public void decState() {
+		switch (state) {
+		case -1:
+			state = 0;
+			break;
+		case 1:
+			state = 0;
+			break;
+		case 3:
+			if (!properties.DO_KNOCKOUT | !properties.DO_QUALIFYING)
+				state = 22;
+			else
+				state = 21;
+			break;
+		case 4:
+			if (properties.DO_QUALIFYING)
+				state = 3;
+			else
+				state = 22;
+			break;
+		case 6:
+			if (properties.DO_KNOCKOUT)
+				state = 5;
+			else
+				state = 3;
+			break;
+		case 21:
+			state = 1;
+			break;
+		case 22:
+			state = 1;
+			break;
+		default:
+			state--;
+			setUnsaved(true);
+		}
+	}
+
+	public boolean get2Team() {
+		return properties.TYPE_2TEAM;
+	}
+
+	public Tournament getCopy() {
+		XStream xstream = new XStream(new DomDriver());
+		String xml = xstream.toXML(this);
+		Tournament tournament = (Tournament) xstream.fromXML(xml);
+		return tournament;
+	}
+
+	public boolean getDoKnockOut() {
+		return properties.DO_KNOCKOUT;
+	}
+
+	public boolean getDoQualifying() {
+		return properties.DO_QUALIFYING;
+	}
+
+	public boolean getDouble() {
+		return properties.TYPE_DOUBLE;
+	}
+
+	public boolean getDoubleView() {
+		return properties.TYPE_DOUBLE | properties.TYPE_2TEAM;
+	}
+
+	public int getFinishedGamesCount() {
+		int result = 0;
+		if (qualifying != null)
+			result += qualifying.getGamesByState(2).size();
+		if (knockOut != null)
+			result += knockOut.getGamesByState(2).size();
+		return result;
+	}
+
+	public KnockOut getKnockOut() {
+		if (knockOut == null)
+			knockOut = new KnockOut();
+		return knockOut;
+	}
+
+	public String getName() {
+		return properties.name;
+	}
+
+	public Properties getProperties() {
+		return properties;
+	}
+
+	public Qualifying getQualifying() {
+		return qualifying;
+	}
+
+	public List<Player> getRanking() {
+		List<Player> result = new ArrayList<Player>();
+		if (properties.DO_KNOCKOUT) {
+			for (int i = knockOut.getTree().size() - 1; i >= 0; i--)
+				for (Player p : knockOut.getTree().get(i))
+					if (!result.contains(p))
+						if (p != null)
+							result.add(p);
+		} else {
+			result.addAll(qualifying.getGroups().get(0).getPlayers());
+			Collections.sort(result);
+		}
+		return result;
+	}
+
+	public boolean getSingle() {
+		return properties.TYPE_SINGLE;
+	}
+
+	public int getState() {
+		return state;
+	}
+
+	public int getTotalGamesCount() {
+		int result = 0;
+		if (qualifying != null)
+			result += qualifying.getTotalGamesCount();
+		if (knockOut != null)
+			result += knockOut.getTotalGamesCount();
+		return result;
+	}
+
+	public void incState() {
+		switch (state) {
+		case 1:
+			if (properties.DO_QUALIFYING & properties.DO_KNOCKOUT)
+				state = 21;
+			else {
+				while (qualifying.getGroups().size() > 1){
+					Group g = qualifying.getGroups().get(qualifying.getGroups().size() - 1);
+					List<Player> plrs = g.getPlayers();
+					for (Player p : plrs)
+						qualifying.getUnassigned().add(p);
+					qualifying.delGroup(qualifying.getGroups().size() - 1);
+				}
+				state = 22;
+			}
+			break;
+		case 21:
+			state = 3;
+			for (Group g : qualifying.getGroups())
+				g.startGroup();
+			break;
+		case 22:
+			if (properties.DO_QUALIFYING) {
+				state = 3;
+				for (Group g : qualifying.getGroups())
+					g.startGroup();
+			} else
+				state = 4;
+			break;
+		case 3:
+			if (properties.DO_KNOCKOUT)
+				state = 4;
+			else
+				state = 6;
+			break;
+		default:
+			state++;
+		}
+		setUnsaved(true);
+	}
+
+	public boolean isUnsaved() {
+		if (knockOut == null)
+			return qualifying.isUnsaved();
+		return qualifying.isUnsaved() | knockOut.isUnsaved();
+	}
+
+	public String saveTournament(String fileName) throws FileNotFoundException,
+			IOException {
+		setUnsaved(false);
+
+		// appends ".ott" to filename if not present
+		if (!fileName.endsWith(SUFFIX))
+			fileName += SUFFIX;
+
+		XStream xstream = new XStream(new DomDriver());
+		String xml = xstream.toXML(this);
+		Interaction.saveText(fileName, xml);
+		return fileName;
+	}
+
+	public void set2Team(boolean dv) {
+		properties.TYPE_2TEAM = dv;
+	}
+
+	public void setDoKnockOut(boolean doKnockOut) {
+		properties.DO_KNOCKOUT = doKnockOut;
+	}
+
+	public void setDoQualifying(boolean doQualifying) {
+		properties.DO_QUALIFYING = doQualifying;
+	}
+
+	public void setDouble(boolean dv) {
+		if (!properties.TYPE_SINGLE & dv) {
+			List<Player> help = new ArrayList<Player>();
+			for (Group g : qualifying.getGroups()) {
+				help.clear();
+				for (Player p : g.getPlayers()) {
+					Player p1;
+					try {
+						p1 = new Double(p);
+						help.add(p1);
+					} catch (InputFormatException e) {
+						System.out
+								.println("ERROR: Can not convert to database.Double");
+					} catch (StringIndexOutOfBoundsException e) {
+						System.out.println("WARNING: Not enough data, " + p
+								+ " skipped.");
+					}
+				}
+				g.getPlayers().clear();
+				g.getPlayers().addAll(help);
+			}
+			help.clear();
+			for (Player p : qualifying.getUnassigned()) {
+				Player p1;
+				try {
+					p1 = new Double(p);
+					help.add(p1);
+				} catch (InputFormatException e) {
+					System.out
+							.println("ERROR: Can not convert to database.Double");
+				} catch (StringIndexOutOfBoundsException e) {
+					System.out.println("WARNING: Not enough data, " + p
+							+ " skipped.");
+				}
+			}
+			qualifying.getUnassigned().clear();
+			qualifying.getUnassigned().addAll(help);
+		}
+		properties.TYPE_DOUBLE = dv;
+	}
+
+	public void setKnockOut(KnockOut k) {
+		setUnsaved(true);
+		if (knockOut != null) {
+			List<Match> matches = knockOut.getMatches();
+			knockOut = k;
+			for (Match m : matches) {
+				System.out.println(m);
+				k.addMatch(m);
+			}
+		} else {
+			knockOut = k;
+		}
+	}
+
+	public void setName(String name) {
+		properties.name = name;
+	}
+
+	public void setQualifying(Qualifying q) {
+		qualifying = q;
+		setUnsaved(true);
+	}
+
+	public void setSingle(boolean dv) {
+		if (!properties.TYPE_SINGLE & dv) {
+			for (Group g : qualifying.getGroups()) {
+				for (Player p : g.getPlayers()) {
+					Player p1 = new Single(p);
+					g.getPlayers().set(g.getPlayers().indexOf(p), p1);
+				}
+			}
+			for (Player p : qualifying.getUnassigned()) {
+				Player p1 = new Single(p);
+				qualifying.getUnassigned().set(
+						qualifying.getUnassigned().indexOf(p), p1);
+			}
+		}
+		properties.TYPE_SINGLE = dv;
+	}
+
+	public boolean setUnsaved(boolean unsaved) {
+		if (unsaved == false) {
+			if (knockOut != null)
+				knockOut.setUnsaved(false);
+			if (qualifying != null)
+				qualifying.setUnsaved(false);
+		}
+		return true;
+	}
+}
