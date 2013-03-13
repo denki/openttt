@@ -250,7 +250,7 @@ public class JListGameCommander extends JGameCommander {
 	public void startGame() {
 		if (((JList) jWaiting).isSelectionEmpty())
 			return;
-		for (Object o : ((JList) jWaiting).getSelectedValues()){
+		for (Object o : ((JList) jWaiting).getSelectedValuesList()){
 			Match game = (Match) o;
 			game.startGame();
 			refresh();
@@ -261,7 +261,7 @@ public class JListGameCommander extends JGameCommander {
 	public void unfinishGame() {
 		if (((JList) jDone).isSelectionEmpty())
 			return;
-		for (Object o : ((JList) jDone).getSelectedValues()){
+		for (Object o : ((JList) jDone).getSelectedValuesList()){
 			Match game = (Match) o;
 			game.setState(1);
 			commandable.delMatch(game);
@@ -274,7 +274,7 @@ public class JListGameCommander extends JGameCommander {
 	public void unstartGame() {
 		if (((JList) jRunning).isSelectionEmpty())
 			return;
-		for (Object o : ((JList) jRunning).getSelectedValues()){
+		for (Object o : ((JList) jRunning).getSelectedValuesList()){
 			Match game = (Match) o;
 			game.setState(0);
 			refresh();

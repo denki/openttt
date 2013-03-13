@@ -95,9 +95,9 @@ public class JPlayers extends View implements KeyListener {
 	Action assignPlayer = new AbstractAction() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (jUnassignedPlayers.getSelectedValues().length > 0) {
+			if (jUnassignedPlayers.getSelectedValuesList().size() > 0) {
 				Group group = ((Group) jGroups.getSelectedItem());
-				for (Object o : jUnassignedPlayers.getSelectedValues()) {
+				for (Object o : jUnassignedPlayers.getSelectedValuesList()) {
 					Player player = (Player) o;
 					tournament.getQualifying().assignPlayer(player, group);
 				}
@@ -211,9 +211,9 @@ public class JPlayers extends View implements KeyListener {
 	Action unassignPlayer = new AbstractAction() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (jGroupedPlayers.getSelectedValues().length > 0) {
+			if (!jGroupedPlayers.getSelectedValuesList().isEmpty()) {
 				Group group = ((Group) jGroups.getSelectedItem());
-				for (Object o : jGroupedPlayers.getSelectedValues()) {
+				for (Object o : jGroupedPlayers.getSelectedValuesList()) {
 					Player player = (Player) o;
 					tournament.getQualifying().unassignPlayer(player, group);
 				}
@@ -260,8 +260,8 @@ public class JPlayers extends View implements KeyListener {
 	Action removePlayer = new AbstractAction() {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			if (jUnassignedPlayers.getSelectedValues().length > 0) {
-				for (Object o : jUnassignedPlayers.getSelectedValues())
+			if (!jUnassignedPlayers.getSelectedValuesList().isEmpty()) {
+				for (Object o : jUnassignedPlayers.getSelectedValuesList())
 					unassignedPlayers.remove(o);
 				main.refreshState();
 			}
@@ -312,7 +312,7 @@ public class JPlayers extends View implements KeyListener {
 				case MouseEvent.BUTTON3:
 					int idx3 = jUnassignedPlayers.locationToIndex(arg0.getPoint());
 					jUnassignedPlayers.setSelectedIndex(idx3);
-					for (Object o : jUnassignedPlayers.getSelectedValues()) {
+					for (Object o : jUnassignedPlayers.getSelectedValuesList()) {
 						new JPlayerDetails(((Player) o).getPersons(), main);
 					}
 					break;
@@ -356,7 +356,7 @@ public class JPlayers extends View implements KeyListener {
 					int idx3 = jGroupedPlayers.locationToIndex(arg0.getPoint());
 					if (idx3 != -1) {
 						jGroupedPlayers.setSelectedIndex(idx3);
-						for (Object o : jGroupedPlayers.getSelectedValues())
+						for (Object o : jGroupedPlayers.getSelectedValuesList())
 							new JPlayerDetails(((Player) o).getPersons(), main);
 					}
 					break;

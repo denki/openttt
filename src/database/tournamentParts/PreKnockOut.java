@@ -62,6 +62,7 @@ public class PreKnockOut {
 				}
 			}
 		}
+		in.close();
 	}
 
 	public void save(String fileName) throws FileNotFoundException, IOException {

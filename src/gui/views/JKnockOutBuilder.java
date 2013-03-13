@@ -250,6 +250,7 @@ public class JKnockOutBuilder extends View {
 					}
 				}
 			}
+			in.close();
 		} catch (IOException e) {
 			System.out.println("ERROR: File " + fileName + " not accessible.");
 		}

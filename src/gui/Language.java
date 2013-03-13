@@ -37,6 +37,7 @@ public class Language {
 					} else
 						keys.put(tabs[0], tabs[1]);
 				}
+			in.close();
 		} catch (IOException e) {
 			System.out.println("ERROR: Can't read language.dat");
 		}
