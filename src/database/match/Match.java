@@ -271,8 +271,7 @@ public class Match extends Edge<Player> implements Comparable<Match> {
 	public Date getTimeRunning() {
 		if (endedDate != null)
 			return new Date(endedDate.getTime() - startedDate.getTime());
-		else
-			return new Date((new Date()).getTime() - startedDate.getTime());
+		return new Date((new Date()).getTime() - startedDate.getTime());
 	}
 
 	public Player getWinner() {
@@ -394,10 +393,9 @@ public class Match extends Edge<Player> implements Comparable<Match> {
 			return leftPlayer.getFullName() + " : " + rightPlayer.getFullName()
 					+ " (" + getLeftSentences() + ":" + getRightSentences()
 					+ ")";
-		else
-			return toString() + " (" + getLeftSentences() + ":"
-					+ getRightSentences() + ")" + " "
-					+ df.format(getTimeRunning()) + "min";
+		return toString() + " (" + getLeftSentences() + ":"
+				+ getRightSentences() + ")" + " "
+				+ df.format(getTimeRunning()) + "min";
 	}
 
 	/**

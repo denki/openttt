@@ -74,10 +74,9 @@ public class JPlayersPresence extends Watcher {
 				if (column < 2) {
 					boolean checked = (Boolean) value;
 					return new JCheckBox("", checked);
-				} else {
-					String v = (String) value;
-					return new JLabel(v);
 				}
+				String v = (String) value;
+				return new JLabel(v);
 			}
 		};
 		
@@ -145,10 +144,9 @@ public class JPlayersPresence extends Watcher {
 					if (column < 2) {
 						boolean checked = (Boolean) value;
 						return new JCheckBox("", checked);
-					} else {
-						String v = (String) value;
-						return new JLabel(v);
 					}
+					String v = (String) value;
+					return new JLabel(v);
 				}
 			};
 			
@@ -191,7 +189,7 @@ public class JPlayersPresence extends Watcher {
 		for (Player p: players) {
 			result.add(new Object[] {p.isThere(), p.isPaid(), p.getFullName()});
 		}
-		return (Object[][]) result.toArray(new Object[0][0]);
+		return result.toArray(new Object[0][0]);
 	}
 	
 	private boolean matches(Player p, String filter) {

@@ -30,8 +30,7 @@ public class JTemplateImporter extends JList {
 				if (groupNum == 1)
 					return name.contains("-" + playerNum + "pl")
 							& name.contains("-" + groupNum + "gr-");
-				else
-					return name.contains("-" + groupNum + "gr-");
+				return name.contains("-" + groupNum + "gr-");
 			}
 		};
 

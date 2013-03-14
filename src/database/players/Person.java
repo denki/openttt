@@ -67,15 +67,13 @@ public class Person {
 	public String getFullName() {
 		if (surname.equals("noboby"))
 			return "<nobody>";
-		else {
-			String result = "";
-			result += surname;
-			if (!prename.equals(""))
-				result += ", " + prename;
-			if (!club.equals(""))
-				result += " (" + club + ")";
-			return result;
-		}
+		String result = "";
+		result += surname;
+		if (!prename.equals(""))
+			result += ", " + prename;
+		if (!club.equals(""))
+			result += " (" + club + ")";
+		return result;
 	}
 
 	/**
@@ -154,13 +152,11 @@ public class Person {
 	public String toString() {
 		if (surname.equals("noboby"))
 			return Language.get("nobody");
-		else {
-			String result = "";
-			result += surname;
-			if (!prename.equals(""))
-				result += ", " + prename.substring(0, 1) + ".";
-			return result;
-		}
+		String result = "";
+		result += surname;
+		if (!prename.equals(""))
+			result += ", " + prename.substring(0, 1) + ".";
+		return result;
 	}
 
 }

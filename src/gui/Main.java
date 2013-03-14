@@ -23,8 +23,6 @@ import java.awt.DisplayMode;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -204,34 +202,33 @@ public class Main {
 		if (actView.handleOpenClose()) {
 			actView.open();
 			return;
-		} else {
-			JFileChooser chooser = new JFileChooser();
-			int returnVal = chooser.showOpenDialog(frame);
-			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				actualFile = chooser.getSelectedFile().getAbsolutePath();
-				String[] splitted = actualFile.split("\\.");
-				if (splitted[splitted.length - 1].equals("otk")) {
-					setView(-1);
-					try {
-						((JKnockOutPreBuilder) actView).open(actualFile);
-					} catch (NumberFormatException e) {
-						System.out.println("ERROR: Wrong format.");
-					}
-				} else if (tournament == null) {
-					actualFile = chooser.getSelectedFile().getAbsoluteFile()
-							.getAbsolutePath();
-					tournament = Tournament.loadTournament(actualFile);
-					setView(tournament.getState());
-				} else {
-					Main m = new Main();
-					m.actualFile = chooser.getSelectedFile().getAbsoluteFile()
-							.getAbsolutePath();
-					;
-					m.tournament = Tournament.loadTournament(chooser
-							.getSelectedFile().getAbsoluteFile()
-							.getAbsolutePath());
-					m.setView(m.tournament.getState());
+		}
+		JFileChooser chooser = new JFileChooser();
+		int returnVal = chooser.showOpenDialog(frame);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			actualFile = chooser.getSelectedFile().getAbsolutePath();
+			String[] splitted = actualFile.split("\\.");
+			if (splitted[splitted.length - 1].equals("otk")) {
+				setView(-1);
+				try {
+					((JKnockOutPreBuilder) actView).open(actualFile);
+				} catch (NumberFormatException e) {
+					System.out.println("ERROR: Wrong format.");
 				}
+			} else if (tournament == null) {
+				actualFile = chooser.getSelectedFile().getAbsoluteFile()
+						.getAbsolutePath();
+				tournament = Tournament.loadTournament(actualFile);
+				setView(tournament.getState());
+			} else {
+				Main m = new Main();
+				m.actualFile = chooser.getSelectedFile().getAbsoluteFile()
+						.getAbsolutePath();
+				;
+				m.tournament = Tournament.loadTournament(chooser
+						.getSelectedFile().getAbsoluteFile()
+						.getAbsolutePath());
+				m.setView(m.tournament.getState());
 			}
 		}
 		Preferences.addFile(actualFile);
@@ -242,23 +239,22 @@ public class Main {
 		if (actView.handleOpenClose()) {
 			actView.open();
 			return;
-		} else {
-			String[] splitted = actualFile.split("\\.");
-			if (splitted[splitted.length - 1].equals("otk")) {
-				setView(-1);
-				try {
-					((JKnockOutPreBuilder) actView).open(actualFile);
-				} catch (NumberFormatException e) {
-					System.out.println("ERROR: Wrong format.");
-				}
-			} else if (tournament == null) {
-				tournament = Tournament.loadTournament(actualFile);
-				setView(tournament.getState());
-			} else {
-				Main m = new Main();
-				m.tournament = Tournament.loadTournament(actualFile);
-				m.setView(m.tournament.getState());
+		}
+		String[] splitted = actualFile.split("\\.");
+		if (splitted[splitted.length - 1].equals("otk")) {
+			setView(-1);
+			try {
+				((JKnockOutPreBuilder) actView).open(actualFile);
+			} catch (NumberFormatException e) {
+				System.out.println("ERROR: Wrong format.");
 			}
+		} else if (tournament == null) {
+			tournament = Tournament.loadTournament(actualFile);
+			setView(tournament.getState());
+		} else {
+			Main m = new Main();
+			m.tournament = Tournament.loadTournament(actualFile);
+			m.setView(m.tournament.getState());
 		}
 	}
 
@@ -339,14 +335,7 @@ public class Main {
 		if (actualFile == null)
 			saveFileAs();
 		else
-			try {
 				actualFile = tournament.saveTournament(actualFile);
-			} catch (FileNotFoundException e) {
-				System.out.println("ERROR: File " + actualFile + " not found.");
-			} catch (IOException e) {
-				System.out.println("ERROR: File " + actualFile
-						+ " not accessible.");
-			}
 		Preferences.addFile(actualFile);
 	}
 

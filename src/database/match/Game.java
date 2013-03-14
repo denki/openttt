@@ -75,8 +75,7 @@ public class Game {
 	public String getTendence() {
 		if (leftBalls > rightBalls)
 			return "+" + rightBalls;
-		else
-			return "-" + leftBalls;
+		return "-" + leftBalls;
 	}
 
 	/**
@@ -91,8 +90,7 @@ public class Game {
 		int diff = high - low;
 		if (gt11)
 			return (diff == 2);
-		else
-			return (diff > 1);
+		return (diff > 1);
 	}
 
 	@Override

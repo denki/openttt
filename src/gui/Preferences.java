@@ -53,6 +53,13 @@ public class Preferences extends JFrame implements ItemListener {
 			saveToFile();
 		}
 	}
+	
+	public static void removeFile(String fileName) {
+		if (fileName != null) {
+			files.remove(fileName);
+			saveToFile();
+		}
+	}
 
 	public static List<String> getFiles() {
 		return files;

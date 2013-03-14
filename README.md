@@ -4,7 +4,7 @@ Software for managing table tennis tournaments. Written in java.
 
 Requirements
 ------------
-java >= 1.6
+java >= 1.7
 
 Compile
 -------

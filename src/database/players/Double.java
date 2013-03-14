@@ -87,11 +87,9 @@ public class Double extends Player {
 
 	@Override
 	public String getFullName() {
-		if (pLeft.getClub().equals(pRight.getClub())) {
+		if (pLeft.getClub().equals(pRight.getClub()))
 			return pLeft.getFullName().substring(0, pLeft.getFullName().indexOf(" (")) + " / " + pRight.getFullName();
-		} else {
-			return pLeft.getFullName() + " / " + pRight.getFullName();
-		}
+		return pLeft.getFullName() + " / " + pRight.getFullName();
 	}
 
 	@Override

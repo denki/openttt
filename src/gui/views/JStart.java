@@ -14,6 +14,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -83,18 +84,21 @@ public class JStart extends View {
 		panQuit.add(new JLabel(Language.get("quit")), BorderLayout.CENTER);
 
 		pan.add(panOpen);
-		if (files.size() > 0) {
+		if (!files.isEmpty()) {
 			JPanel panFiles = new JPanel(new GridLayout(files.size(), 0));
 			panFiles.setBorder(BorderFactory.createCompoundBorder(BorderFactory
 					.createTitledBorder(Language.get("recentlyOpened")),
 					BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-			for (String fileName : files) {
+			for (final String fileName : files) {
 				final JLabel lbl = new JLabel(fileName);
 				lbl.addMouseListener(new MouseListener() {
 					@Override
 					public void mouseClicked(MouseEvent e) {
 						if (e.getButton() == MouseEvent.BUTTON1) {
-							main.openFile(lbl.getText());
+							if (new File(lbl.getText()).exists())
+								main.openFile(lbl.getText());
+							else
+								Preferences.removeFile(fileName);
 						}
 					}
 

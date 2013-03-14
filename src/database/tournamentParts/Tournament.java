@@ -237,8 +237,7 @@ public class Tournament {
 		return qualifying.isUnsaved() | knockOut.isUnsaved();
 	}
 
-	public String saveTournament(String fileName) throws FileNotFoundException,
-			IOException {
+	public String saveTournament(String fileName) {
 		setUnsaved(false);
 
 		// appends ".ott" to filename if not present

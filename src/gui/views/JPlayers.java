@@ -566,7 +566,7 @@ public class JPlayers extends View implements KeyListener {
 	}
 
 	public boolean isReady() {
-		if (groups.size() == 0)
+		if (groups.isEmpty())
 			return false;
 
 		for (Group g : groups) {

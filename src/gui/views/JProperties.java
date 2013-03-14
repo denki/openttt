@@ -89,14 +89,11 @@ public class JProperties extends View implements ItemListener {
 
 	@Override
 	public String getIconEnabledPattern() {
-		if (qualifying == null | knockout == null) {
+		if (qualifying == null | knockout == null)
 			return "1111001111";
-		}
-		if (qualifying.getState() | knockout.getState()) {
+		if (qualifying.getState() | knockout.getState())
 			return "1111001111";
-		} else {
-			return "1111001110";
-		}
+		return "1111001110";
 	}
 
 	@Override
