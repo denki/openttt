@@ -1,8 +1,9 @@
 package gui;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +21,8 @@ public class Language {
 		keys = new TreeMap<String, String>();
 		languages = new ArrayList<String>();
 		try {
-			BufferedReader in = new BufferedReader(new FileReader(
-					"language.dat"));
+			InputStream str = ClassLoader.getSystemClassLoader().getResourceAsStream("language.dat");
+			BufferedReader in = new BufferedReader(new InputStreamReader(str));
 			String line = null;
 			while ((line = in.readLine()) != null)
 				if (line.contains("=")) {

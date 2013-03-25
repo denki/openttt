@@ -1,23 +1,25 @@
 package gui.templates;
 
+import java.net.URL;
+
 import javax.swing.ImageIcon;
 
 public class IconManager {
-	private static String iconPath = "icons/";
 	private static String px = "48";
 	private static String px_small = "22";
 	private static String suffix = ".png";
 
 	public static ImageIcon getImageIcon(String name) {
-		ImageIcon result;
+		URL url;
 		if (name.equals("main"))
-			result = new ImageIcon(iconPath + name + suffix);
+			url = ClassLoader.getSystemClassLoader().getResource(name + suffix);
 		else if (name.contains("_small"))
-			result = new ImageIcon(iconPath + px_small + "/"
+			url = ClassLoader.getSystemClassLoader().getResource(px_small + "/"
 					+ name.subSequence(0, name.indexOf("_small")) + suffix);
 		else
-			result = new ImageIcon(iconPath + px + "/" + name + suffix);
-		return result;
+			url = ClassLoader.getSystemClassLoader().getResource(px + "/" + name + suffix);
+		System.out.println(url);
+		return new ImageIcon(url);
 	}
 
 	public static String getPx() {
