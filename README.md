@@ -13,3 +13,7 @@ make
 Run
 ---
 make test
+
+Build JAR file
+--------------
+ant jar
