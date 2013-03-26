@@ -2,10 +2,7 @@ package gui.components;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,27 +19,13 @@ public class JTemplateImporter extends JList {
 	public JTemplateImporter(String directory, final int groupNum,
 			final int playerNum){
 		super();
+		templates = new ArrayList<Template>();
 		InputStream str = ClassLoader
 				.getSystemClassLoader()
 				.getResourceAsStream(directory + "ko-" + groupNum + "gr-" + playerNum
 								+ "pl.otk");
-		System.out.println("file: " + directory + "ko-" + groupNum + "gr-" + playerNum
-				+ "pl.otk");
-//		File dir = new File(file);
-		templates = new ArrayList<Template>();
-		templates.add(new Template(str, groupNum, playerNum));
-//		FilenameFilter flt = new FilenameFilter() {
-//			@Override
-//			public boolean accept(File dir, String name) {
-//				if (groupNum == 1)
-//					return name.contains("-" + playerNum + "pl")
-//							& name.contains("-" + +"gr-");
-//				return name.contains("-" + groupNum + "gr-");
-//			}
-//		};
-//
-//		for (File f : dir.listFiles(flt))
-//			templates.add(new Template(directory, f.getName()));
+		if (str != null)
+			templates.add(new Template(str, groupNum, playerNum));
 
 		setListData(templates.toArray(new Template[0]));
 		setCellRenderer(new ListCellRenderer() {
