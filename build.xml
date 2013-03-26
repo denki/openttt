@@ -1,24 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project default="create_run_jar" name="Create Runnable Jar for Project openttt">
-    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
-    <!--ANT 1.7 is required                                        -->
-    <target name="create_run_jar">
-        <jar destfile="/home/tobias/workspace/openttt/openttt.jar" filesetmanifest="mergewithoutmain">
+<project default="jar" name="Create Runnable Jar for Project openttt">
+    <target name="jar">
+        <jar destfile="openttt.jar" filesetmanifest="mergewithoutmain">
             <manifest>
                 <attribute name="Main-Class" value="gui.Main"/>
                 <attribute name="Class-Path" value="."/>
             </manifest>
-            <fileset dir="/home/tobias/workspace/openttt/icons"/>
-            <fileset dir="/home/tobias/workspace/openttt/bin"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/tobias/workspace/openttt/lib/dom4j-1.6.1.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/tobias/workspace/openttt/lib/odfdom-java-0.8.7.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/tobias/workspace/openttt/lib/poi-3.8-beta5-20111217.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/tobias/workspace/openttt/lib/poi-ooxml-3.8-beta5-20111217.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/tobias/workspace/openttt/lib/poi-ooxml-schemas-3.8-beta5-20111217.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/tobias/workspace/openttt/lib/xercesImpl.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/tobias/workspace/openttt/lib/xml-apis.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/tobias/workspace/openttt/lib/xmlbeans-2.3.0.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/tobias/workspace/openttt/lib/xstream-1.4.1.jar"/>
+            <fileset dir="icons"/>
+            <fileset dir="bin"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/dom4j-1.6.1.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/odfdom-java-0.8.7.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/poi-3.8-beta5-20111217.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/poi-ooxml-3.8-beta5-20111217.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/poi-ooxml-schemas-3.8-beta5-20111217.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/xercesImpl.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/xml-apis.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/xmlbeans-2.3.0.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/xstream-1.4.1.jar"/>
         </jar>
     </target>
 </project>
