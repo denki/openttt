@@ -5,7 +5,7 @@ VERSION=0.4.5
 all:
 	mkdir -p bin/
 	rm -rf bin/*
-	javac -O -d bin/ -sourcepath src/ -classpath "lib/*" src/gui/Main.java
+	javac -O -d bin/ -sourcepath "src/:resources/" -classpath "lib/*" src/gui/Main.java
 # 	mkdir -p zipped
 # 	unzip -o lib/dom4j-*.jar -d zipped
 # 	unzip -o lib/xstream*.jar -d zipped

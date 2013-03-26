@@ -13,8 +13,11 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +55,7 @@ public class JKnockOutBuilder extends View {
 				int index, boolean isSelected, boolean cellHasFocus) {
 			JLabel result;
 			if (value != null) {
-				if (((Player) value).isNobody()){
+				if (((Player) value).isNobody()) {
 					result = new JLabel("<" + Language.get("nobody") + ">");
 				} else {
 					result = new JLabel(((Player) value).getPlayerPlaceGroup());
@@ -93,7 +96,7 @@ public class JKnockOutBuilder extends View {
 			else
 				players.addAll(g.getPlayersByPlace(from, to));
 
-		ti = new JTemplateImporter("templates", qualifying.getGroups().size(),
+		ti = new JTemplateImporter("ko_templates/", qualifying.getGroups().size(),
 				qualifying.getGroups().get(0).getSize());
 		ti.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		ti.addListSelectionListener(new ListSelectionListener() {
@@ -101,7 +104,9 @@ public class JKnockOutBuilder extends View {
 			public void valueChanged(ListSelectionEvent arg0) {
 				if (!ti.isSelectionEmpty()) {
 					int idx = ti.getSelectedIndex();
-					importFile(((Template) ti.getSelectedValue()).getPath());
+					InputStream str = ((Template) ti.getSelectedValue()).getInputStream();
+					if (str != null)
+						importFile(str);
 					ti.setSelectedIndex(idx);
 				}
 			}
@@ -151,9 +156,18 @@ public class JKnockOutBuilder extends View {
 			public void actionPerformed(ActionEvent arg0) {
 				JFileChooser chooser = new JFileChooser();
 				int returnVal = chooser.showOpenDialog(null);
-				if (returnVal == JFileChooser.APPROVE_OPTION)
-					importFile(chooser.getSelectedFile().getAbsoluteFile()
-							.getAbsolutePath());
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					InputStream str;
+					try {
+						str = new FileInputStream(chooser.getSelectedFile().getAbsoluteFile()
+								.getAbsolutePath());
+						importFile(str);
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+				}
 
 			}
 		};
@@ -217,9 +231,12 @@ public class JKnockOutBuilder extends View {
 		return "1111001111";
 	}
 
-	public void importFile(String fileName) {
+	public void importFile(InputStream file) {
 		try {
-			BufferedReader in = new BufferedReader(new FileReader(fileName));
+			// System.out.println(fileName);
+			// InputStream str =
+			// ClassLoader.getSystemClassLoader().getResourceAsStream(fileName);
+			BufferedReader in = new BufferedReader(new InputStreamReader(file));
 			String line = null;
 			String[] splitted;
 			int from = 0, to = 0;
@@ -252,7 +269,7 @@ public class JKnockOutBuilder extends View {
 			}
 			in.close();
 		} catch (IOException e) {
-			System.out.println("ERROR: File " + fileName + " not accessible.");
+			System.out.println("ERROR: File not accessible.");
 		}
 	}
 

@@ -1,21 +1,17 @@
 package database.tournamentParts;
 
+import java.io.InputStream;
+
 import gui.Language;
 
 public class Template {
-	private String fileName, directory;
+	private InputStream stream;
 	private int groupNum, playerNum;
 
-	public Template(String directory, String fileName) {
-		this.directory = directory;
-		this.fileName = fileName;
-
-		String[] splitted = fileName.split("-");
-		splitted[1] = splitted[1].split("gr")[0];
-		splitted[2] = splitted[2].split("pl")[0];
-
-		groupNum = Integer.parseInt(splitted[1]);
-		playerNum = Integer.parseInt(splitted[2]);
+	public Template(InputStream str, int groupNum2, int playerNum2) {
+		stream = str;
+		groupNum = groupNum2;
+		playerNum = playerNum2;
 	}
 
 	public String getDescription() {
@@ -23,12 +19,12 @@ public class Template {
 				+ Language.get("players") + ": " + playerNum + "<html>";
 	}
 
-	public String getPath() {
-		return directory + "/" + fileName;
+	public InputStream getInputStream() {
+		return stream;
 	}
 
 	@Override
 	public String toString() {
-		return fileName;
+		return "ko-" + groupNum + "gr-" + playerNum + "pl";
 	}
 }

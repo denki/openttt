@@ -5,6 +5,7 @@ import java.net.URL;
 import javax.swing.ImageIcon;
 
 public class IconManager {
+	private static String iconPath = "";
 	private static String px = "48";
 	private static String px_small = "22";
 	private static String suffix = ".png";
@@ -12,13 +13,12 @@ public class IconManager {
 	public static ImageIcon getImageIcon(String name) {
 		URL url;
 		if (name.equals("main"))
-			url = ClassLoader.getSystemClassLoader().getResource(name + suffix);
+			url = ClassLoader.getSystemClassLoader().getResource(iconPath + name + suffix);
 		else if (name.contains("_small"))
-			url = ClassLoader.getSystemClassLoader().getResource(px_small + "/"
+			url = ClassLoader.getSystemClassLoader().getResource(iconPath + px_small + "/"
 					+ name.subSequence(0, name.indexOf("_small")) + suffix);
 		else
-			url = ClassLoader.getSystemClassLoader().getResource(px + "/" + name + suffix);
-		System.out.println(url);
+			url = ClassLoader.getSystemClassLoader().getResource(iconPath + px + "/" + name + suffix);
 		return new ImageIcon(url);
 	}
 
