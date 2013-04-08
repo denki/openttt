@@ -17,12 +17,12 @@ public class JTemplateImporter extends JList {
 	List<Template> templates;
 
 	public JTemplateImporter(String directory, final int groupNum,
-			final int playerNum){
+			final int playerNum) {
 		super();
 		templates = new ArrayList<Template>();
-		InputStream str = ClassLoader
-				.getSystemClassLoader()
-				.getResourceAsStream(directory + "ko-" + groupNum + "gr-" + playerNum
+		InputStream str = ClassLoader.getSystemClassLoader()
+				.getResourceAsStream(
+						directory + "ko-" + groupNum + "gr-" + playerNum
 								+ "pl.otk");
 		if (str != null)
 			templates.add(new Template(str, groupNum, playerNum));
