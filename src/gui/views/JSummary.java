@@ -5,7 +5,7 @@ import gui.Language;
 import gui.Main;
 import gui.components.JGroupTable;
 import gui.components.JRanking;
-import gui.components.JScrollableTreeView;
+import gui.components.JTreeView;
 import gui.templates.View;
 import gui.watcher.JKnockOutWatcherWindow;
 
@@ -17,12 +17,11 @@ import java.awt.event.KeyListener;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 
 import database.Calculator;
-import database.match.Match;
-import database.players.Player;
 import database.tournamentParts.Tournament;
 
 @SuppressWarnings("serial")
@@ -31,7 +30,7 @@ public class JSummary extends View {
 	private JTextField jName;
 	private JRanking jRanking;
 	private Tournament tournament;
-	private JScrollableTreeView<Player, Match> tv;
+	private JTreeView tv;
 
 	public JSummary(Main m) {
 		super(m);
@@ -92,10 +91,8 @@ public class JSummary extends View {
 		c.gridheight = 1;
 		c.weightx = 1;
 		if (tournament.getDoKnockOut()) {
-			tv = new JScrollableTreeView<Player, Match>(tournament
-					.getKnockOut().getTree(), tournament.getKnockOut()
-					.getMatches());
-			pan.add(tv, c);
+			tv = new JTreeView(tournament.getKnockOut());
+			pan.add(new JScrollPane(tv), c);
 		}
 
 		c.gridx = 2;
@@ -129,7 +126,8 @@ public class JSummary extends View {
 			result += Calculator.htmlTabular(true, tournament.getQualifying()
 					.getGroups());
 		if (main.getTournament().getDoKnockOut())
-			result += JKnockOutWatcherWindow.getHtml(tv.getTreeView());
+			result += JKnockOutWatcherWindow.getHtml(new JTreeView(tournament
+					.getKnockOut()));
 		result += jRanking.getText();
 		result += "</body></html>";
 		return result;

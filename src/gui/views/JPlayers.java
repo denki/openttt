@@ -281,6 +281,7 @@ public class JPlayers extends View implements KeyListener {
 		// non-button elements
 		jUnassignedPlayers = new JList();
 		jUnassignedPlayers.addMouseListener(new DefaultMouseListener(){
+			@Override
 			public void mouseClicked(MouseEvent arg0){
 				double x = arg0.getPoint().getX();
 				switch (arg0.getButton()){

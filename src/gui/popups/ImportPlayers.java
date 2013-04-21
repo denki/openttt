@@ -421,6 +421,7 @@ public class ImportPlayers extends Watcher {
 		repaint();
 	}
 	
+	@Override
 	public void repaint() {
 		setTitle(Language.get("importPlayers"));
 		if (table != null & columnNames != null) {
@@ -474,6 +475,7 @@ public class ImportPlayers extends Watcher {
 		super.repaint();
 	}
 	
+	@Override
 	public void dispose() {
 		main.removeWatcher(this);
 		super.dispose();

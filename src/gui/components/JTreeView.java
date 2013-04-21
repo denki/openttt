@@ -2,233 +2,124 @@ package gui.components;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Frame;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.PrintJob;
-import java.awt.Toolkit;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.List;
-import java.util.Properties;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import javax.swing.DebugGraphics;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
+import javax.swing.text.StyleContext;
 
-import database.match.Edge;
-import database.match.Node;
+import util.Tree;
 
-@SuppressWarnings("serial")
-public class JTreeView<T extends Node, U extends Edge<T>> extends JPanel
-		implements MouseListener {
+import database.match.Match;
+import database.players.Player;
+import database.tournamentParts.KnockOut2;
+
+public class JTreeView extends JPanel {
+
 	/**
 	 * Distances between the cells
 	 */
-	private static final int dx1 = 10, dx2 = 90, dy1 = 5, dy2 = 8;
+	private static final int dx1 = 10;
+	private static int dx2 = 0;
+	private static final int dy1 = 5;
 	/**
 	 * Height and Length of a Cell
 	 */
-	private static final int h = 15, l = 180;
+	private static int h = 19;
+	private static int l = 0;
 	/**
 	 * Offset for Window Decoration
 	 */
-	private static final int seedX = 5, seedY = 5 + h;
+	private static final int seedX = 0, seedY = 10 + h;
 
-	private List<U> edges;
+	private Tree tree;
+	private Map<Tree, Player> players;
+	private Map<Tree, Match> matches;
 
-	private Graphics graphic;
-
-	private List<List<T>> tree;
-
-	/**
-	 * Constructor for the Tree View
-	 * 
-	 * @param tree
-	 *            top level list represents the levels of the ko-tree, low level
-	 *            list represents the players in the level
-	 */
-	public JTreeView(List<List<T>> tree, List<U> edges) {
+	public JTreeView(KnockOut2 ko) {
 		super();
-		this.tree = tree;
-		this.edges = edges;
-		int sizeX = tree.size() * l + (tree.size() - 1) * (dx1 + dx2) + 2
-				* seedX;
-		int sizeY = tree.get(0).size() * h + (tree.get(0).size() - 1) * dy1
-				+ (tree.get(0).size() / 2 - 1) * (dy2 - dy1) + 2 * seedY - 2
-				* h + 1;
-		setPreferredSize(new Dimension(sizeX, sizeY));
-		addMouseListener(this);
-	}
-
-	private void drawChildLine(Graphics graphic, int layer, int elemNum) {
-		if (layer == 0)
-			return;
-		int[] foot1 = getFootCoord(layer - 1, elemNum * 2);
-		int[] foot2 = getFootCoord(layer - 1, elemNum * 2 + 1);
-		int[] foot12 = getFootCoord(layer, elemNum);
-
-		U edge = null;
-		for (U edge1 : edges) {
-			T node1 = tree.get(layer - 1).get(elemNum * 2);
-			T node2 = tree.get(layer - 1).get(elemNum * 2 + 1);
-			if (edge1.getLeft().equals(node1) & edge1.getRight().equals(node2)) {
-				edge = edge1;
-				break;
-			}
-		}
-			
-		graphic.drawLine(foot1[0] + l, foot1[1] - h / 2, foot1[0] + l + dx1,
-				foot1[1] - h / 2);
-		graphic.drawLine(foot2[0] + l, foot2[1] - h / 2, foot2[0] + l + dx1,
-				foot2[1] - h / 2);
-		graphic.drawLine(foot2[0] + l + dx1, foot2[1] - h / 2, foot1[0] + l
-				+ dx1, foot1[1] - h / 2);
-		graphic.drawLine(foot12[0], foot12[1] - h / 2, foot1[0] + l + dx1,
-				foot12[1] - h / 2);
+		tree = ko.getTree();
+		players = ko.getPlayersMap();
+		matches = ko.getMatchesMap();
 		
-		if (edge != null) {
-			graphic.drawString(edge.edgePrintTop(), foot1[0] + l + dx1 + 2,
-					foot12[1] - h / 2 - 2);
-			graphic.drawString(edge.edgePrintBottom(), foot1[0] + l + dx1 + 2,
-					foot12[1] + h / 2 - 2);
-		
-			if (edge.getWinner() != null) {
-				graphic.drawLine(foot12[0], foot12[1] - h / 2 - 1, foot1[0] + l + dx1,
-						foot12[1] - h / 2 - 1);
-				
-				if (edge.getWinner().equals(edge.getLeft())) {
-					graphic.drawLine(foot1[0] + l, foot1[1] - h / 2 - 1, foot1[0] + l + dx1,
-							foot1[1] - h / 2 - 1);
-					graphic.drawLine(foot1[0] + l + dx1 + 1, foot1[1] - h / 2, foot1[0] + l + dx1 + 1
-							, foot12[1] - h / 2);
-				} else {
-					graphic.drawLine(foot2[0] + l, foot2[1] - h / 2 - 1, foot2[0] + l + dx1,
-							foot2[1] - h / 2 - 1);
-					graphic.drawLine(foot2[0] + l + dx1 + 1, foot2[1] - h / 2, foot2[0] + l + dx1 + 1
-							, foot12[1] - h / 2);
-				}
-			}
-		}
+		FontMetrics fm = StyleContext.getDefaultStyleContext().getFontMetrics(
+				UIManager.getDefaults().getFont("TextField.font"));
+		for (Entry<Tree, Player> p : players.entrySet())
+			l = Math.max(fm.stringWidth(p.getValue().toString()) + 8, l);
+		h = fm.getHeight() + 4;
+		for (Entry<Tree, Match> m : matches.entrySet())
+			dx2 = Math.max(fm.stringWidth(m.getValue().edgePrintBottom()) + 8,
+					dx2);
+		setPreferredSize(new Dimension(tree.depth() * (l + dx1 + dx2) - dx2 + l + seedX,
+				tree.countLeaves() * (h + dy1) - dy1 + seedY));
 	}
 
-	private void drawNode(Graphics graphic, String text, int layer, int elemNum) {
-		int[] footCoord = getFootCoord(layer, elemNum);
-
-		int lbx = footCoord[0];
-		int lby = footCoord[1];
-
-		int rbx = lbx + l;
-		int rby = lby;
-
-		int ltx = lbx;
-		int lty = lby - h;
-
-		int rtx = rbx;
-		int rty = lty;
-
-		graphic.drawString(text, lbx + 1, lby - 2);
-		graphic.drawLine(lbx, lby, rbx, rby); // bottom line
-		graphic.drawLine(lbx, lby, ltx, lty); // left line
-		graphic.drawLine(rbx, rby, rtx, rty); // right line
-		graphic.drawLine(ltx, lty, rtx, rty); // top line
-	}
-
-//	public void drawTree() {
-//		drawTree(graphic);
-//	}
-
-	public void drawTree(Graphics graphics) {
-		recursiveDraw(graphics, tree.size() - 1, 0, true);
-	}
-	
-	public void recursiveDraw(Graphics graphics, int x, int y, boolean drawIfNull) {
-		boolean drawIfNull1 = drawIfNull;
-		if (tree.get(x).get(y) != null) {
-			drawNode(graphics, tree.get(x).get(y).toString(), x, y);
-			drawIfNull1 = false;
-		}
-		else if (drawIfNull1)
-			drawNode(graphics, "", x, y);
-		if (x > 0) {
-			if (tree.get(x - 1).get(2 * y) != null & tree.get(x - 1).get(2 * y + 1) != null){
-				recursiveDraw(graphics, x - 1, 2 * y, drawIfNull1);
-				recursiveDraw(graphics, x - 1, 2 * y + 1, drawIfNull1);
-				drawChildLine(graphic, x, y);
-			} else if (drawIfNull1) {
-				recursiveDraw(graphics, x - 1, 2 * y, drawIfNull1);
-				recursiveDraw(graphics, x - 1, 2 * y + 1, drawIfNull1);
-				drawChildLine(graphic, x, y);
-			}
-		}
-	}
-
-	private int[] getFootCoord(int layer, int elemNum) {
-		int[] result = new int[2];
-		result[0] = seedX + (l + (dx1 + dx2)) * layer;
-
-		if (layer == 0)
-			result[1] = seedY + (dy1 + h) * (elemNum) + (dy2 - dy1)
-					* (elemNum / 2);
-		else
-			result[1] = getFootCoord(layer - 1, 2 * elemNum)[1]
-					+ (getFootCoord(layer - 1, 2 * elemNum + 1)[1] - getFootCoord(
-							layer - 1, 2 * elemNum)[1]) / 2;
-
-		return result;
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent arg0) {
-		if (arg0.getClickCount() == 2) {
-			Toolkit tk = Toolkit.getDefaultToolkit();
-			PrintJob pj = tk.getPrintJob(new Frame(), "", new Properties());
-			if (pj != null) {
-				Graphics g = pj.getGraphics();
-				printAll(g);
-				g.dispose();
-				pj.end();
-			}
-		}
-
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent arg0) {
-
-	}
-
-	@Override
-	public void mouseExited(MouseEvent arg0) {
-
-	}
-
-	@Override
-	public void mousePressed(MouseEvent arg0) {
-
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent arg0) {
-
-	}
-	
 	@Override
 	public void paint(Graphics g) {
-		super.paint(g);
-		graphic = g;
+		for (Entry<Tree, Player> p : players.entrySet())
+			l = Math.max(g.getFontMetrics()
+					.stringWidth(p.getValue().toString()) + 8, l);
+		h = g.getFontMetrics().getHeight() + 4;
+		for (Entry<Tree, Match> m : matches.entrySet())
+			dx2 = Math.max(
+					g.getFontMetrics().stringWidth(
+							m.getValue().edgePrintBottom()) + 8, dx2);
 		g.setColor(Color.BLACK);
-		drawTree(g);
+		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+		Point pnt = new Point((l + dx1 + dx2) * (tree.depth() - 1) + l + seedX,
+				seedY);
+		drawTree(pnt, (Graphics2D) g, tree);
+		setPreferredSize(new Dimension(pnt.x + l + dx1, pnt.y - h));
 	}
 
-	@Override
-	public void print(Graphics g) {
-		Color oldBack = getBackground();
-		setOpaque(true);
-		setBackground(Color.WHITE);
-		paint(g);
-		setBackground(oldBack);
-	}
+	private int drawTree(Point p, Graphics2D g, Tree t) {
+		int[] ys = new int[2];
+		p.x -= dx1 + dx2 + l;
+		int i = 0;
+		for (Tree t1 : t.getChildren()) {
+			ys[i] = drawTree(p, g, t1);
+			i++;
+		}
+		int y = p.y;
+		if (t.hasChildren()) {
+			y = (ys[0] + ys[1]) / 2;
+			g.drawLine(p.x + l, ys[0] - h / 2, p.x + l + dx1, ys[0] - h / 2);
+			g.drawLine(p.x + l, ys[1] - h / 2, p.x + l + dx1, ys[1] - h / 2);
+			g.drawLine(p.x + l + dx1, ys[0] - h / 2, p.x + l + dx1, ys[1] - h
+					/ 2);
+			g.drawLine(p.x + l + dx1, y - h / 2, p.x + l + dx1 + dx2, y - h / 2);
+			if (matches.containsKey(t)) {
+				Match m = matches.get(t);
+				g.drawString(m.edgePrintTop(), p.x + l + dx1 + 2, y - h / 2 - 3);
+				g.drawString(m.edgePrintBottom(), p.x + l + dx1 + 2, y + h / 2
+						- 5);
+			}
+		} else {
+			p.y += h + dy1;
+		}
+		p.x += dx1 + dx2 + l;
+		if (players.containsKey(t))
+			g.drawString(players.get(t).toString(), p.x + 4, y - 2
+					- g.getFontMetrics().getDescent());
 
-	public void setEdges(List<U> edges) {
-		this.edges = edges;
+		// draw box
+		g.drawLine(p.x, y, p.x + l, y); // bottom line
+		g.drawLine(p.x, y, p.x, y - h); // left line
+		g.drawLine(p.x + l, y, p.x + l, y - h); // right line
+		g.drawLine(p.x, y - h, p.x + l, y - h); // top line
+
+		return y;
 	}
 
 }

@@ -1,11 +1,17 @@
 package database.tournamentParts;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Queue;
+
+import util.Binary;
+import util.Nullary;
+import util.Tree;
 
 import database.match.Commandable;
 import database.match.Match;
@@ -13,43 +19,8 @@ import database.players.Player;
 
 public class KnockOut2 extends Commandable {
 
-	protected interface Tree {
-		boolean hasChildren();
-
-		List<Tree> getChildren();
-	}
-
-	protected class Nullary implements Tree {
-		public boolean hasChildren() {
-			return false;
-		}
-
-		public List<Tree> getChildren() {
-			return Collections.emptyList();
-		}
-	}
-
-	protected class Binary implements Tree {
-		private Tree left, right;
-
-		public Binary(Tree left, Tree right) {
-			this.left = left;
-			this.right = right;
-		}
-
-		public boolean hasChildren() {
-			return true;
-		}
-
-		public List<Tree> getChildren() {
-			List<Tree> result = new ArrayList<>();
-			result.add(left);
-			result.add(right);
-			return result;
-		}
-	}
-
 	private Tree tree;
+	private boolean unsaved = false;
 	private Map<Tree, Player> players;
 	private Map<Tree, Match> matches;
 
@@ -59,74 +30,152 @@ public class KnockOut2 extends Commandable {
 		matches = new HashMap<Tree, Match>();
 	}
 
-	public void setPlayers(List<Player> players) {
-		if (tree == null) {
-			tree = setPlayers(players.toArray(new Player[players.size()]),
-					this.players);
+	public void setPlayers(List<Player> pls) {
+		Queue<Tree> st = new LinkedList<Tree>();
+		players.clear();
+		// TODO rescue matches!
+		matches.clear();
+		for (Player p : pls) {
+			if (p.isNobody() || p == null)
+				st.add(null);
+			else {
+				Tree n = new Nullary();
+				st.add(n);
+				players.put(n, p);
+			}
 		}
+		tree = setPlayers(st);
+		visitNodes();
+		unsaved = true;
 	}
 
-	public Tree setPlayers(Player[] players, Map<Tree, Player> plrs) {
-		if (players.length == 1) {
-			Tree result = new Nullary();
-			plrs.put(result, players[0]);
-			return result;
-		} else if (players.length == 2) {
-			if (players[0] == null) {
-				Tree result = new Nullary();
-				plrs.put(result, players[1]);
-				return result;
-			} else if (players[1] == null) {
-				Tree result = new Nullary();
-				plrs.put(result, players[0]);
-				return result;
-			} else {
-				Tree l = setPlayers(Arrays.copyOfRange(players, 0, 0), plrs);
-				Tree r = setPlayers(Arrays.copyOfRange(players, 1, 1), plrs);
-				return new Binary(l, r);
+	private Tree setPlayers(Queue<Tree> st) {
+		System.out.println("len = " + st.size());
+		if (st.size() == 1)
+			return st.poll();
+		Tree t1, t2;
+		Queue<Tree> st1 = new LinkedList<Tree>();
+		while (!st.isEmpty()) {
+			t1 = st.poll();
+			System.out.println("t1 = " + t1);
+			t2 = st.poll();
+			System.out.println("t2 = " + t2);
+			if (t1 == null)
+				st1.add(t2);
+			else if (t2 == null)
+				st1.add(t1);
+			else {
+				System.out.println(players.get(t1) + ", " + players.get(t2));
+				st1.add(new Binary(t1, t2));
 			}
-		} else {
-			Player[] pL = Arrays.copyOfRange(players, 0, players.length / 2);
-			Player[] pR = Arrays.copyOfRange(players, players.length / 2 + 1,
-					players.length);
-			Tree l = setPlayers(pL, plrs);
-			Tree r = setPlayers(pR, plrs);
-			return new Binary(l, r);
 		}
+		return setPlayers(st1);
 	}
 
 	@Override
 	public boolean addMatch(Match game) {
-		// TODO Auto-generated method stub
-		return false;
+		visitNodes();
+		unsaved = true;
+		return true;
 	}
 
 	@Override
 	public void delMatch(Match game) {
-		// TODO Auto-generated method stub
+		visitNodes();
+		unsaved = true;
+	}
 
+	private void visitNodes() {
+		visitNodes(tree);
+	}
+
+	private void visitNodes(Tree t) {
+		for (Tree t1 : t.getChildren())
+			visitNodes(t1);
+		if (matches.containsKey(t))
+			if (matches.get(t).getState() == Match.STATE_FINISHED)
+				players.put(t, matches.get(t).getWinner());
+			else
+				players.remove(t);
+		else if (t.hasChildren() && players.containsKey(t.getChildren().get(0))
+				&& players.containsKey(t.getChildren().get(1)))
+			matches.put(t, new Match(players.get(t.getChildren().get(0)),
+					players.get(t.getChildren().get(1))));
+		else if (matches.containsKey(t)
+				&& (!players.containsKey(t.getChildren().get(0)) || players
+						.containsKey(t.getChildren().get(1))))
+			matches.remove(t);
 	}
 
 	@Override
 	public int getFinishedGamesCount() {
-		return matches.size();
+		return getMatchByState(Match.STATE_FINISHED).size();
 	}
 
 	@Override
-	public List<Match> getGamesByState(int state) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Match> getMatchByState(int state) {
+		List<Match> result = new ArrayList<Match>();
+		for (Match e : getMatches())
+			if (e.getState() == state)
+				result.add(e);
+		return result;
 	}
 
 	@Override
 	public List<Match> getMatches() {
-		return null;
+		List<Match> result = new ArrayList<Match>();
+		for (Entry<Tree, Match> e : matches.entrySet())
+			result.add(e.getValue());
+		return result;
 	}
 
 	@Override
 	public int getTotalGamesCount() {
-		// TODO Auto-generated method stub
-		return 0;
+		return tree.countNodes();
+	}
+
+	public boolean isUnsaved() {
+		return unsaved;
+	}
+
+	public void setUnsaved(boolean b) {
+		unsaved = b;
+	}
+
+	public List<Player> getRanking() {
+		List<Player> result = new ArrayList<Player>();
+		List<Tree> trees = Collections.singletonList(tree);
+		rank(result, trees);
+		return result;
+	}
+
+	private void rank(List<Player> result, List<Tree> trees) {
+		List<Tree> trees1 = new ArrayList<Tree>();
+		for (Tree t : trees) {
+			if (!players.containsKey(t))
+				result.add(Player.getNobody());
+			else if (!result.contains(players.get(t)))
+				result.add(players.get(t));
+			trees1.addAll(t.getChildren());
+		}
+		if (!trees1.isEmpty())
+			rank(result, trees1);
+	}
+
+	public boolean isDone() {
+		return getRanking().get(0) != null;
+	}
+
+	public Tree getTree() {
+		return tree;
+	}
+
+	public Map<Tree, Player> getPlayersMap() {
+		return players;
+	}
+
+	public Map<Tree, Match> getMatchesMap() {
+		return matches;
 	}
 
 }

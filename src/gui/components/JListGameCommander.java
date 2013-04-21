@@ -68,7 +68,7 @@ public class JListGameCommander extends JGameCommander {
 	@Override
 	public void clearSearch() {
 		tSearch.setText("");
-		((JList) jDone).setListData(commandable.getGamesByState(2).toArray());
+		((JList) jDone).setListData(commandable.getMatchByState(2).toArray());
 	}
 
 	@Override
@@ -194,9 +194,9 @@ public class JListGameCommander extends JGameCommander {
 		idxhole = ((JList) jWaiting).getSelectedIndex();
 		idxrunning = ((JList) jRunning).getSelectedIndex();
 		idxfinished = ((JList) jDone).getSelectedIndex();
-		lWaiting = commandable.getGamesByState(0);
-		lRunning = commandable.getGamesByState(1);
-		lDone = commandable.getGamesByState(2);
+		lWaiting = commandable.getMatchByState(0);
+		lRunning = commandable.getMatchByState(1);
+		lDone = commandable.getMatchByState(2);
 		Collections.sort(lWaiting);
 		Collections.sort(lDone);
 		((JList) jWaiting).setListData(lWaiting.toArray());
@@ -217,9 +217,9 @@ public class JListGameCommander extends JGameCommander {
 		String text = tSearch.getText();
 		text = text.toLowerCase();
 		if (text.equals(""))
-			lst.addAll(commandable.getGamesByState(2));
+			lst.addAll(commandable.getMatchByState(2));
 		else
-			for (Match g : commandable.getGamesByState(2)) {
+			for (Match g : commandable.getMatchByState(2)) {
 				boolean contains = true;
 				for (String s : text.split(" "))
 					contains = contains

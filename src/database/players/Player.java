@@ -20,7 +20,7 @@ public abstract class Player extends Node implements Comparable<Player> {
 
 	}
 
-	public Player(Tournament tournament) {
+	Player(Tournament tournament) {
 		this.tournament = tournament;
 		matches = new ArrayList<Match>();
 	}

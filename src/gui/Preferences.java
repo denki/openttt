@@ -222,6 +222,7 @@ public class Preferences extends JFrame implements ItemListener {
 		setVisible(true);
 	}
 
+	@Override
 	public void repaint() {
 		if (pan1 != null)
 			pan1.setBorder(BorderFactory.createCompoundBorder(

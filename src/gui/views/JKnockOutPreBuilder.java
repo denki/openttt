@@ -224,6 +224,7 @@ public class JKnockOutPreBuilder extends View implements ActionListener {
 			getParent().repaint();
 	}
 	
+	@Override
 	public void repaint() {
 		if (pComboBoxes != null) {
 			int placeFrom = ((Integer) jPlaceFrom.getValue()).intValue();

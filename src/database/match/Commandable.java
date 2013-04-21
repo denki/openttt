@@ -39,7 +39,7 @@ public abstract class Commandable {
 	 *            specified state
 	 * @return games in specified state
 	 */
-	public abstract List<Match> getGamesByState(int state);
+	public abstract List<Match> getMatchByState(int state);
 
 	/**
 	 * List of all encapsuled games

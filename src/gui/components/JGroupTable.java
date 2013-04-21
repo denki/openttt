@@ -24,6 +24,7 @@ public class JGroupTable extends JPanel implements ActionListener {
 	private JCommandableProgress prog;
 
 	public class ReadOnlyTableModel extends DefaultTableModel {
+		@Override
 		public boolean isCellEditable(int rowIndex, int mColIndex) {
 			return false;
 		 }

@@ -57,10 +57,13 @@ public class JPlayersPresence extends Watcher {
 		
 		aFilter = new JTextField("");
 		aFilter.addKeyListener(new KeyListener() {
+			@Override
 			public void keyTyped(KeyEvent arg0) {}
+			@Override
 			public void keyReleased(KeyEvent arg0) {
 				refresh();
 			}
+			@Override
 			public void keyPressed(KeyEvent arg0) {}
 		});
 		
@@ -92,9 +95,13 @@ public class JPlayersPresence extends Watcher {
 		table.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {}
+			@Override
 			public void mousePressed(MouseEvent arg0) {}
+			@Override
 			public void mouseExited(MouseEvent arg0) {}
+			@Override
 			public void mouseEntered(MouseEvent arg0) {}
+			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				int column = table.columnAtPoint(arg0.getPoint());
 				int row = table.rowAtPoint(arg0.getPoint());

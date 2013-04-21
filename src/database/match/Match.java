@@ -20,6 +20,10 @@ import database.players.Team2;
  */
 public class Match extends Edge<Player> implements Comparable<Match> {
 
+	public static int STATE_INITIAL = 0;
+	public static int STATE_RUNNING = 1;
+	public static int STATE_FINISHED = 2;
+	
 	private List<Game> games;
 	private int group = -1, maxSentences = 3, state = 0;
 	private Player leftPlayer, rightPlayer, loser, winner;
@@ -77,7 +81,7 @@ public class Match extends Edge<Player> implements Comparable<Match> {
 			endGame();
 		}
 		if (winner != null)
-			state = 2;
+			state = STATE_FINISHED;
 	}
 
 	/**
@@ -112,12 +116,10 @@ public class Match extends Edge<Player> implements Comparable<Match> {
 	@Override
 	public String edgePrintBottom() {
 		String result = "";
-		if (state == 2)
-			for (int i = 2; i < games.size(); i++) {
+		if (state == STATE_FINISHED)
+			for (int i = 0; i < games.size(); i++) {
 				result += games.get(i).getTendence();
-				if (i == games.size() - 1)
-					result += ")";
-				else
+				if (i != games.size() - 1)
 					result += ",";
 			}
 		return result;
@@ -125,21 +127,16 @@ public class Match extends Edge<Player> implements Comparable<Match> {
 
 	@Override
 	public String edgePrintTop() {
-		String result = "";
-		if (state == 2) {
-			result += getLeftSentences() + ":" + getRightSentences() + " (";
-			for (int i = 0; i < 2; i++)
-				if (i < games.size())
-					result += games.get(i).getTendence() + ",";
-		}
-		return result;
+		if (state == STATE_FINISHED)
+			return getLeftSentences() + ":" + getRightSentences();
+		return "";
 	}
 
 	/**
 	 * Ends the Game
 	 */
 	public void endGame() {
-		state = 2;
+		state = STATE_FINISHED;
 		if (endedDate == null)
 			endedDate = new Date();
 		setUnsaved(true);
@@ -274,6 +271,7 @@ public class Match extends Edge<Player> implements Comparable<Match> {
 		return new Date((new Date()).getTime() - startedDate.getTime());
 	}
 
+	@Override
 	public Player getWinner() {
 		return winner;
 	}
@@ -347,12 +345,12 @@ public class Match extends Edge<Player> implements Comparable<Match> {
 	 *            new State
 	 */
 	public void setState(int state) {
-		if (this.state == 1 & state == 2) {
+		if (this.state == STATE_RUNNING & state == STATE_FINISHED) {
 			winner.addMatch(this);
 			loser.addMatch(this);
 			startedDate = new Date();
 		}
-		if (this.state == 2 & state < 2) {
+		if (this.state == STATE_FINISHED & state < STATE_FINISHED) {
 			winner.delMatch(this);
 			loser.delMatch(this);
 			winner = null;

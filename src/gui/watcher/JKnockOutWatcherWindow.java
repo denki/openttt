@@ -3,7 +3,6 @@ package gui.watcher;
 import gui.Interaction;
 import gui.Language;
 import gui.Main;
-import gui.components.JScrollableTreeView;
 import gui.components.JTreeView;
 import gui.templates.Watcher;
 
@@ -12,30 +11,26 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-
-import database.match.Match;
-import database.players.Player;
+import javax.swing.JComponent;
+import javax.swing.JScrollPane;
 
 @SuppressWarnings("serial")
 public class JKnockOutWatcherWindow extends Watcher {
 	private Main main;
-	private JScrollableTreeView<Player, Match> treeView;
+	private JComponent treeView;
 
 	public JKnockOutWatcherWindow(Main m) {
 		super(Language.get("knockOutWatcher"), m);
 		main = m;
-		treeView = new JScrollableTreeView<Player, Match>(main.getTournament()
-				.getKnockOut().getTree(), main.getTournament().getKnockOut()
-				.getMatches());
+		treeView = new JTreeView(main.getTournament().getKnockOut());
 
 	}
 
-	public static String getHtml(JTreeView<Player, Match> jTreeView) {
+	public static String getHtml(JTreeView jTreeView) {
 		jTreeView.repaint();
-		BufferedImage img = new BufferedImage(jTreeView.getWidth(),
-				jTreeView.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		BufferedImage img = new BufferedImage(jTreeView.getPreferredSize().width,
+				jTreeView.getPreferredSize().height, BufferedImage.TYPE_INT_ARGB);
 		jTreeView.print(img.getGraphics());
-		img = img.getSubimage(0, 0, jTreeView.getPreferredSize().width, jTreeView.getPreferredSize().height);
 
 		File file;
 		if (System.getProperty("java.io.tmpdir").charAt(0) == '/')
@@ -55,7 +50,7 @@ public class JKnockOutWatcherWindow extends Watcher {
 				+ "</h2><p><img src=\"treeImg.png\" alt=\"treeImg.png\"></p>";
 	}
 
-	public static void print(JTreeView<Player, Match> treeView) {
+	public static void print(JTreeView treeView) {
 		Interaction.saveHtml("groupTable",
 				"<html><head><title>" + Language.get("knockOut")
 						+ "</title></head><body>" + getHtml(treeView)
@@ -65,18 +60,13 @@ public class JKnockOutWatcherWindow extends Watcher {
 
 	@Override
 	public void generateWindow() {
-		add(treeView);
+		add(new JScrollPane(treeView));
 		pack();
 		setVisible(true);
 	}
 
-	public void print() {
-		print(treeView.getTreeView());
-	}
-
 	@Override
 	public void refresh() {
-		treeView.setEdges(main.getTournament().getKnockOut().getMatches());
 		treeView.repaint();
 		repaint();
 	}

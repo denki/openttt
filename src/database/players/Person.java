@@ -16,7 +16,7 @@ public class Person {
 	 * Construct from surname
 	 * @param surname surname of the Person
 	 */
-	public Person(String surname) {
+	Person(String surname) {
 		this(surname, "");
 	}
 
@@ -25,7 +25,7 @@ public class Person {
 	 * @param surname surname of the Person
 	 * @param prename prename of the Person
 	 */
-	public Person(String surname, String prename) {
+	Person(String surname, String prename) {
 		this(surname, prename, "");
 	}
 
@@ -35,7 +35,7 @@ public class Person {
 	 * @param prename prename of the Person
 	 * @param club club the Person is in
 	 */
-	public Person(String surname, String prename, String club) {
+	Person(String surname, String prename, String club) {
 		this.surname = surname.substring(0, 1).toUpperCase()
 				+ surname.substring(1);
 		this.prename = (prename.equals("")) ? "" : prename.substring(0, 1)

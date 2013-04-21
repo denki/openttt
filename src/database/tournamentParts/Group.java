@@ -41,7 +41,7 @@ public class Group extends Commandable{
 	 * @param player
 	 *            player to add
 	 */
-	public void addPlayer(Player player) {
+	void addPlayer(Player player) {
 		players.add(player);
 		unsaved = true;
 	}
@@ -52,7 +52,7 @@ public class Group extends Commandable{
 	 * @param p
 	 *            player to remove
 	 */
-	public void delPlayer(Player p) {
+	void delPlayer(Player p) {
 		players.remove(p);
 		unsaved = true;
 	}
@@ -87,7 +87,8 @@ public class Group extends Commandable{
 	 *            specified state
 	 * @return List of games with specified state
 	 */
-	public List<Match> getGamesByState(int state) {
+	@Override
+	public List<Match> getMatchByState(int state) {
 		List<Match> result = new ArrayList<Match>();
 		for (Match g : games)
 			if (g.getState() == state)
@@ -213,7 +214,7 @@ public class Group extends Commandable{
 	 * 
 	 * @return number of generated games
 	 */
-	public int startGroup() {
+	int startGroup() {
 		games = Calculator.calculateGames(this);
 		unsaved = true;
 		return games.size();

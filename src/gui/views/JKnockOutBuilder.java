@@ -199,19 +199,19 @@ public class JKnockOutBuilder extends View {
 		gbc.weightx = 1;
 		gbc.weighty = 1;
 		add(pan, gbc);
-		List<List<Player>> tree = main.getTournament().getKnockOut().getTree();
-		if (tree.isEmpty()) {
-			if (ti.count() == 1)
-				ti.setSelectedIndex(0);
-		} else {
-			int i = 0;
-			for (JComboBox jcb : jComboBoxes) {
-				if (tree.get(0).size() > i) {
-					jcb.setSelectedItem(tree.get(0).get(i));
-					i++;
-				}
-			}
-		}
+//		List<List<Player>> tree = main.getTournament().getKnockOut().getTree();
+//		if (tree.isEmpty()) {
+//			if (ti.count() == 1)
+//				ti.setSelectedIndex(0);
+//		} else {
+//			int i = 0;
+//			for (JComboBox jcb : jComboBoxes) {
+//				if (tree.get(0).size() > i) {
+//					jcb.setSelectedItem(tree.get(0).get(i));
+//					i++;
+//				}
+//			}
+//		}
 	}
 
 	@Override

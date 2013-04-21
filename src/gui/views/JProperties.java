@@ -119,6 +119,7 @@ public class JProperties extends View implements ItemListener {
 		repaint();
 	}
 	
+	@Override
 	public void repaint() {
 		if (single != null)
 			single.setLabel(Language.get("single"));

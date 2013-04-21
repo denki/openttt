@@ -22,7 +22,7 @@ import exceptions.InputFormatException;
 
 public class Tournament {
 	private static String SUFFIX = ".ott";
-	private KnockOut knockOut;
+	private KnockOut2 knockOut;
 	private Properties properties;
 	private Qualifying qualifying;
 	private int state;
@@ -134,15 +134,15 @@ public class Tournament {
 	public int getFinishedGamesCount() {
 		int result = 0;
 		if (qualifying != null)
-			result += qualifying.getGamesByState(2).size();
+			result += qualifying.getMatchByState(2).size();
 		if (knockOut != null)
-			result += knockOut.getGamesByState(2).size();
+			result += knockOut.getMatchByState(2).size();
 		return result;
 	}
 
-	public KnockOut getKnockOut() {
+	public KnockOut2 getKnockOut() {
 		if (knockOut == null)
-			knockOut = new KnockOut();
+			knockOut = new KnockOut2();
 		return knockOut;
 	}
 
@@ -161,11 +161,12 @@ public class Tournament {
 	public List<Player> getRanking() {
 		List<Player> result = new ArrayList<Player>();
 		if (properties.DO_KNOCKOUT) {
-			for (int i = knockOut.getTree().size() - 1; i >= 0; i--)
-				for (Player p : knockOut.getTree().get(i))
-					if (!result.contains(p))
-						if (p != null)
-							result.add(p);
+//			for (int i = knockOut.getTree().size() - 1; i >= 0; i--)
+//				for (Player p : knockOut.getTree().get(i))
+//					if (!result.contains(p))
+//						if (p != null)
+//							result.add(p);
+			return knockOut.getRanking();
 		} else {
 			result.addAll(qualifying.getGroups().get(0).getPlayers());
 			Collections.sort(result);
@@ -303,7 +304,7 @@ public class Tournament {
 		properties.TYPE_DOUBLE = dv;
 	}
 
-	public void setKnockOut(KnockOut k) {
+	public void setKnockOut(KnockOut2 k) {
 		setUnsaved(true);
 		if (knockOut != null) {
 			List<Match> matches = knockOut.getMatches();
@@ -343,7 +344,7 @@ public class Tournament {
 		properties.TYPE_SINGLE = dv;
 	}
 
-	public boolean setUnsaved(boolean unsaved) {
+	private boolean setUnsaved(boolean unsaved) {
 		if (unsaved == false) {
 			if (knockOut != null)
 				knockOut.setUnsaved(false);

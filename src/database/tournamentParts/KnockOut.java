@@ -78,7 +78,7 @@ public class KnockOut extends Commandable {
 	}
 
 	@Override
-	public List<Match> getGamesByState(int state) {
+	public List<Match> getMatchByState(int state) {
 		List<Match> result = new ArrayList<Match>();
 		for (Match g : getMatches())
 			if (g.getState() == state)

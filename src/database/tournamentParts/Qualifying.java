@@ -13,7 +13,7 @@ public class Qualifying extends Commandable {
 	private List<Player> unassigned = new ArrayList<Player>();
 	private boolean unsaved = false;
 
-	public Qualifying(int gruppen) {
+	Qualifying(int gruppen) {
 		groups = new ArrayList<Group>();
 		int i = 0;
 		for (i = 0; i < gruppen; i++)
@@ -60,10 +60,10 @@ public class Qualifying extends Commandable {
 	}
 
 	@Override
-	public List<Match> getGamesByState(int state) {
+	public List<Match> getMatchByState(int state) {
 		List<Match> games = new ArrayList<Match>();
 		for (Group g : groups)
-			games.addAll(g.getGamesByState(state));
+			games.addAll(g.getMatchByState(state));
 		return games;
 	}
 
@@ -89,7 +89,7 @@ public class Qualifying extends Commandable {
 	}
 
 	public boolean isDone() {
-		return (getGamesByState(0).size() + getGamesByState(1).size() == 0);
+		return (getMatchByState(0).size() + getMatchByState(1).size() == 0);
 	}
 
 	public boolean isUnsaved() {

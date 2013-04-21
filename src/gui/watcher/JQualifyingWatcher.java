@@ -59,6 +59,7 @@ public class JQualifyingWatcher extends Watcher {
 		}
 	}
 	
+	@Override
 	public void refresh() {
 		//do nothing
 	}

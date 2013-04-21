@@ -3,25 +3,23 @@ package gui.views;
 import gui.Main;
 import gui.components.JGameCommander;
 import gui.components.JListGameCommander;
-import gui.components.JScrollableTreeView;
 import gui.components.JTreeView;
 import gui.templates.View;
 
 import java.awt.GridLayout;
 
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 
-import database.match.Match;
-import database.players.Player;
-import database.tournamentParts.KnockOut;
+import database.tournamentParts.KnockOut2;
 
 @SuppressWarnings("serial")
 public class JKnockOut extends View {
 
 	private JGameCommander jgc;
-	private KnockOut knockout;
+	private KnockOut2 knockout;
 
-	private JScrollableTreeView<Player, Match> tv;
+	private JTreeView tv;
 
 	public JKnockOut(Main m) {
 		super(m);
@@ -30,13 +28,12 @@ public class JKnockOut extends View {
 
 	@Override
 	public void generateWindow() {
-		tv = new JScrollableTreeView<Player, Match>(knockout.getTree(),
-				knockout.getMatches());
+		tv = new JTreeView(knockout);
 		jgc = new JListGameCommander(main, knockout);
 
-		JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, tv, jgc);
+		JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(tv), jgc);
 
-		setLayout(new GridLayout(1, 1));
+		setLayout(new GridLayout(1,1));
 		add(split);
 	}
 
@@ -45,15 +42,9 @@ public class JKnockOut extends View {
 		return (!knockout.isDone()) ? "1111111110" : "1111111111";
 	}
 
-	public JTreeView<Player, Match> getTreeView() {
-		return tv.getTreeView();
-	}
-
 	@Override
 	public void refresh() {
-		tv.setEdges(knockout.getMatches());
 		jgc.refresh();
-		tv.repaint();
 		main.setEnabledPattern(getIconEnabledPattern());
 	}
 }

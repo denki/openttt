@@ -35,8 +35,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 
 import database.Calculator;
-import database.match.Match;
-import database.players.Player;
 import database.tournamentParts.Tournament;
 
 public class Main {
@@ -270,7 +268,7 @@ public class Main {
 					.getQualifying().getGroups()));
 			break;
 		case 5:
-			JTreeView<Player, Match> tv = ((JKnockOut) actView).getTreeView();
+			JTreeView tv = new JTreeView(tournament.getKnockOut());
 			JKnockOutWatcherWindow.print(tv);
 			break;
 		case 6:

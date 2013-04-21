@@ -8,7 +8,7 @@ import database.Calculator;
  * @author Tobias Denkinger
  * 
  */
-public class Game {
+class Game {
 	private int leftBalls = 0, rightBalls = 0;
 
 	/**
@@ -16,7 +16,7 @@ public class Game {
 	 * @param leftBalls number of balls, the left player won
 	 * @param rightBalls number of balls, the right player won
 	 */
-	public Game(int leftBalls, int rightBalls) {
+	Game(int leftBalls, int rightBalls) {
 		this.leftBalls = leftBalls;
 		this.rightBalls = rightBalls;
 	}
@@ -25,7 +25,7 @@ public class Game {
 	 * Constructor for game
 	 * @param tendenceString String representing a short form of the Game outcome
 	 */
-	public Game(String tendenceString) {
+	Game(String tendenceString) {
 		int tendence = Integer.parseInt(tendenceString.replace("+", ""));
 		if (tendence < 0) {
 			if (tendence > -10) {
