@@ -20,8 +20,8 @@ $ make jar
 
 Install
 -------
-# make install
+\# make install
 
 Uninstall
 ---------
-# make uninstall
+\# make uninstall
