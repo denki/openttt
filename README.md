@@ -8,12 +8,20 @@ java >= 1.7
 
 Compile
 -------
-make
+$ make
 
 Run
 ---
-make test
+$ make test
 
 Build JAR file
 --------------
-ant jar
+$ make jar
+
+Install
+-------
+# make install
+
+Uninstall
+---------
+# make uninstall
