@@ -110,6 +110,7 @@ public class JPlayers extends View implements KeyListener {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			jFilter.setText("");
+			refreshLists();
 		}
 	};
 
