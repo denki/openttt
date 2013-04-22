@@ -5,24 +5,10 @@ VERSION=0.4.5
 all:
 	mkdir -p bin/
 	rm -rf bin/*
-	javac -O -d bin/ -sourcepath "src/:resources/" -classpath "lib/*" src/gui/Main.java
-# 	mkdir -p zipped
-# 	unzip -o lib/dom4j-*.jar -d zipped
-# 	unzip -o lib/xstream*.jar -d zipped
-# 	unzip -o lib/poi-3*.jar -d zipped
-# 	unzip -o lib/poi-ooxml-3*.jar -d zipped
-# 	unzip -o lib/poi-ooxml-schemas*.jar -d zipped
-# 	unzip -o lib/xerces*.jar -d zipped
-# 	unzip -o lib/xml-apis.jar -d zipped
-# 	unzip -o lib/xmlbeans-*.jar -d zipped
-# 	unzip -o lib/odfdom*.jar -d zipped
-# 	rm -rf zipped/META-INF/
-# 	rm -rf zipped/font_metrics.properties
-# 	mv zipped/* bin/.
-# 	rm -rf zipped
+	javac -O -d bin/ -sourcepath "src:resources:language:icons" -classpath "lib/*" src/gui/Main.java
 	
 test: all
-	java -cp bin:lib/* gui.Main
+	java -cp bin:lib/*:language:icons:resources gui.Main
 
 # prof: all
 # 	java -cp bin -prof gui.Main
