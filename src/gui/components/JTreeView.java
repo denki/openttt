@@ -22,7 +22,7 @@ import util.Tree;
 
 import database.match.Match;
 import database.players.Player;
-import database.tournamentParts.KnockOut2;
+import database.tournamentParts.KnockOut;
 
 public class JTreeView extends JPanel {
 
@@ -46,7 +46,7 @@ public class JTreeView extends JPanel {
 	private Map<Tree, Player> players;
 	private Map<Tree, Match> matches;
 
-	public JTreeView(KnockOut2 ko) {
+	public JTreeView(KnockOut ko) {
 		super();
 		tree = ko.getTree();
 		players = ko.getPlayersMap();

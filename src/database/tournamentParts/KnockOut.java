@@ -1,222 +1,181 @@
 package database.tournamentParts;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Queue;
 
-import database.Calculator;
+import util.Binary;
+import util.Nullary;
+import util.Tree;
+
 import database.match.Commandable;
 import database.match.Match;
 import database.players.Player;
 
-/**
- * Represents a knock out
- * 
- * @author Tobias Denkinger
- * 
- */
 public class KnockOut extends Commandable {
-	private List<Match> matches;
-	private List<List<Player>> survivors;
+
+	private Tree tree;
 	private boolean unsaved = false;
+	private Map<Tree, Player> players;
+	private Map<Tree, Match> matches;
 
 	public KnockOut() {
-		matches = new ArrayList<Match>();
-		survivors = new ArrayList<List<Player>>();
+		tree = null;
+		players = new HashMap<Tree, Player>();
+		matches = new HashMap<Tree, Match>();
+	}
+
+	public void setPlayers(List<Player> pls) {
+		Queue<Tree> st = new LinkedList<Tree>();
+		players.clear();
+		// TODO rescue matches!
+		matches.clear();
+		for (Player p : pls) {
+			if (p.isNobody() || p == null)
+				st.add(null);
+			else {
+				Tree n = new Nullary();
+				st.add(n);
+				players.put(n, p);
+			}
+		}
+		tree = setPlayers(st);
+		visitNodes();
 		unsaved = true;
 	}
 
-	@Override
-	public boolean addMatch(Match g) {
-		for (List<Player> plrs : survivors)
-			for (int i = 0; i < plrs.size(); i = i + 2)
-				if (plrs.size() > i + 1)
-					if (plrs.get(i) != null & plrs.get(i + 1) != null)
-						if ((plrs.get(i).equals(g.getLeftPlayer()))
-								& (plrs.get(i + 1).equals(g.getRightPlayer()))) {
-							int idx = survivors.indexOf(plrs);
-							survivors.get(idx + 1).set(i / 2, g.getWinner());
-							return true;
-						}
-		return false;
+	private Tree setPlayers(Queue<Tree> st) {
+		System.out.println("len = " + st.size());
+		if (st.size() == 1)
+			return st.poll();
+		Tree t1, t2;
+		Queue<Tree> st1 = new LinkedList<Tree>();
+		while (!st.isEmpty()) {
+			t1 = st.poll();
+			System.out.println("t1 = " + t1);
+			t2 = st.poll();
+			System.out.println("t2 = " + t2);
+			if (t1 == null)
+				st1.add(t2);
+			else if (t2 == null)
+				st1.add(t1);
+			else {
+				System.out.println(players.get(t1) + ", " + players.get(t2));
+				st1.add(new Binary(t1, t2));
+			}
+		}
+		return setPlayers(st1);
 	}
 
 	@Override
-	public void delMatch(Match g) {
-		for (List<Player> plrs : survivors)
-			for (int i = 0; i < plrs.size(); i = i + 2)
-				if (plrs.size() > i + 1)
-					if (plrs.get(i) != null & plrs.get(i + 1) != null)
-						if ((plrs.get(i).equals(g.getLeftPlayer()))
-								& (plrs.get(i + 1).equals(g.getRightPlayer()))) {
-							int idx = survivors.indexOf(plrs);
+	public boolean addMatch(Match game) {
+		visitNodes();
+		unsaved = true;
+		return true;
+	}
 
-							if (survivors.size() > idx + 2) {
-								// calculate affected games
-								int idxn1, idxn2;
-								if ((i / 2) % 2 == 0) {
-									idxn1 = i / 2;
-									idxn2 = i / 2 + 1;
-								} else {
-									idxn1 = i / 2 - 1;
-									idxn2 = i / 2;
-								}
-								Player pLeft = survivors.get(idx + 1)
-										.get(idxn1);
-								Player pRight = survivors.get(idx + 1).get(
-										idxn2);
-								Match m = new Match(pLeft, pRight);
-								delMatch(m);
-							}
-							// delete affected players
-							survivors.get(idx + 1).set(i / 2, null);
-						}
+	@Override
+	public void delMatch(Match game) {
+		visitNodes();
+		unsaved = true;
+	}
+
+	private void visitNodes() {
+		visitNodes(tree);
+	}
+
+	private void visitNodes(Tree t) {
+		for (Tree t1 : t.getChildren())
+			visitNodes(t1);
+		if (matches.containsKey(t))
+			if (matches.get(t).getState() == Match.STATE_FINISHED)
+				players.put(t, matches.get(t).getWinner());
+			else
+				players.remove(t);
+		else if (t.hasChildren() && players.containsKey(t.getChildren().get(0))
+				&& players.containsKey(t.getChildren().get(1)))
+			matches.put(t, new Match(players.get(t.getChildren().get(0)),
+					players.get(t.getChildren().get(1))));
+		else if (matches.containsKey(t)
+				&& (!players.containsKey(t.getChildren().get(0)) || players
+						.containsKey(t.getChildren().get(1))))
+			matches.remove(t);
 	}
 
 	@Override
 	public int getFinishedGamesCount() {
-		return Calculator.getGamesByState(getMatches(), 2).size();
+		return getMatchByState(Match.STATE_FINISHED).size();
 	}
 
 	@Override
 	public List<Match> getMatchByState(int state) {
 		List<Match> result = new ArrayList<Match>();
-		for (Match g : getMatches())
-			if (g.getState() == state)
-				result.add(g);
+		for (Match e : getMatches())
+			if (e.getState() == state)
+				result.add(e);
 		return result;
 	}
 
 	@Override
 	public List<Match> getMatches() {
-		List<Match> newGames = new ArrayList<Match>();
-		for (List<Player> plrs : survivors)
-			for (int i = 0; i < plrs.size(); i = i + 2)
-				if (plrs.size() > i + 1)
-					if ((plrs.get(i) != null) & (plrs.get(i + 1) != null)) {
-						Match g = new Match(plrs.get(i), plrs.get(i + 1));
-						if (!matches.contains(g)) {
-							newGames.add(g);
-							setUnsaved(true);
-						} else
-							newGames.add(matches.get(matches.indexOf(g)));
-					}
-		matches = newGames;
-		return matches;
+		List<Match> result = new ArrayList<Match>();
+		for (Entry<Tree, Match> e : matches.entrySet())
+			result.add(e.getValue());
+		return result;
 	}
 
 	@Override
 	public int getTotalGamesCount() {
-		int result = 0;
-		for (List<Player> plrs : survivors)
-			for (int i = 0; i < plrs.size(); i = i + 2)
-				if (plrs.size() > i + 1)
-					if ((survivors.indexOf(plrs) > 0)
-							| ((plrs.get(i) != null) & (plrs.get(i + 1) != null)))
-						result++;
-		return result;
+		return tree.countNodes();
 	}
 
-	/**
-	 * Returns the
-	 * 
-	 * @return tree of survivors
-	 */
-	public List<List<Player>> getTree() {
-		return survivors;
-	}
-
-	/**
-	 * Returns if the KnockOut is over
-	 * 
-	 * @return true if KnockOut is over, false otherwise
-	 */
-	public boolean isDone() {
-		return (survivors.get(survivors.size() - 1).get(0) != null);
-	}
-
-	/**
-	 * Indicates unsaved changes
-	 * 
-	 * @return true if there are unsaved changes, false otherwise
-	 */
 	public boolean isUnsaved() {
-		boolean result = unsaved;
-		for (Match g : matches)
-			result = result | g.isUnsaved();
-		for (List<Player> plrs : survivors)
-			for (Player p : plrs)
-				if (p != null)
-					result = result | p.isUnsaved();
+		return unsaved;
+	}
+
+	public void setUnsaved(boolean b) {
+		unsaved = b;
+	}
+
+	public List<Player> getRanking() {
+		List<Player> result = new ArrayList<Player>();
+		List<Tree> trees = Collections.singletonList(tree);
+		rank(result, trees);
 		return result;
 	}
 
-	public void setPlayers(List<Player> plrs) {
-		boolean doIt = survivors.isEmpty();
-		if (!doIt)
-			doIt = !survivors.get(0).equals(plrs);
-		if (doIt) {
-			survivors.clear();
-			int i = plrs.size();
-			List<Player> filtered = new ArrayList<Player>();
-			for (Player p : plrs)
-				if (p == null)
-					filtered.add(null);
-				else if (p.isNobody())
-					filtered.add(null);
-				else
-					filtered.add(p);
-			survivors.add(filtered);
-			while (i > 1) {
-				List<Player> lst = new ArrayList<Player>();
-				i = i / 2;
-				for (int j = 0; j < i; j++)
-					lst.add(null);
-				survivors.add(lst);
-			}
-			for (i = 0; i < plrs.size(); i += 2) {
-				if (filtered.get(i) == null)
-					survivors.get(1).set(i / 2, plrs.get(i + 1));
-				if (filtered.get(i + 1) == null)
-					survivors.get(1).set(i / 2, plrs.get(i));
-			}
-			
-			//add already played games here
-			List<Match> oldMatches = new ArrayList<Match>();
-			oldMatches.addAll(matches);
-			matches.clear();
-			boolean addedSomething = true;
-			while (addedSomething & !oldMatches.isEmpty()) {
-				addedSomething = false;
-				for (Match g: oldMatches) {
-					if (addMatch(g)) {
-						matches.add(g);
-						addedSomething = true;
-					}
-				}
-				oldMatches.removeAll(matches);
-			}
-			
-			unsaved = true;
+	private void rank(List<Player> result, List<Tree> trees) {
+		List<Tree> trees1 = new ArrayList<Tree>();
+		for (Tree t : trees) {
+			if (!players.containsKey(t))
+				result.add(Player.getNobody());
+			else if (!result.contains(players.get(t)))
+				result.add(players.get(t));
+			trees1.addAll(t.getChildren());
 		}
-
+		if (!trees1.isEmpty())
+			rank(result, trees1);
 	}
 
-	/**
-	 * Sets state to saved/unsaved
-	 * 
-	 * @param unsaved
-	 *            new saved state
-	 */
-	public void setUnsaved(boolean unsaved) {
-		this.unsaved = unsaved;
-		if (unsaved == false) {
-			for (Match g : matches)
-				g.setUnsaved(false);
-			for (List<Player> plrs : survivors)
-				for (Player p : plrs)
-					if (p != null)
-						p.setUnsaved(false);
-		}
+	public boolean isDone() {
+		return getRanking().get(0) != null;
+	}
+
+	public Tree getTree() {
+		return tree;
+	}
+
+	public Map<Tree, Player> getPlayersMap() {
+		return players;
+	}
+
+	public Map<Tree, Match> getMatchesMap() {
+		return matches;
 	}
 
 }

@@ -22,7 +22,7 @@ import exceptions.InputFormatException;
 
 public class Tournament {
 	private static String SUFFIX = ".ott";
-	private KnockOut2 knockOut;
+	private KnockOut knockOut;
 	private Properties properties;
 	private Qualifying qualifying;
 	private int state;
@@ -140,9 +140,9 @@ public class Tournament {
 		return result;
 	}
 
-	public KnockOut2 getKnockOut() {
+	public KnockOut getKnockOut() {
 		if (knockOut == null)
-			knockOut = new KnockOut2();
+			knockOut = new KnockOut();
 		return knockOut;
 	}
 
@@ -304,7 +304,7 @@ public class Tournament {
 		properties.TYPE_DOUBLE = dv;
 	}
 
-	public void setKnockOut(KnockOut2 k) {
+	public void setKnockOut(KnockOut k) {
 		setUnsaved(true);
 		if (knockOut != null) {
 			List<Match> matches = knockOut.getMatches();

@@ -11,13 +11,13 @@ import java.awt.GridLayout;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 
-import database.tournamentParts.KnockOut2;
+import database.tournamentParts.KnockOut;
 
 @SuppressWarnings("serial")
 public class JKnockOut extends View {
 
 	private JGameCommander jgc;
-	private KnockOut2 knockout;
+	private KnockOut knockout;
 
 	private JTreeView tv;
 
