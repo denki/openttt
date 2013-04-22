@@ -7,6 +7,8 @@
                 <attribute name="Class-Path" value="."/>
             </manifest>
             <fileset dir="icons"/>
+            <fileset dir="resources"/>
+            <fileset dir="language"/>
             <fileset dir="bin"/>
             <zipfileset excludes="META-INF/*.SF" src="lib/dom4j-1.6.1.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="lib/odfdom-java-0.8.7.jar"/>
