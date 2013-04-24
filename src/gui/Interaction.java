@@ -51,7 +51,7 @@ public class Interaction {
 		return fileData.toString();
 	}
 
-	public static void print(File file) {
+	private static void print(File file) {
 		try {
 			if (Desktop.getDesktop().isSupported(Desktop.Action.PRINT))
 				try {
@@ -77,7 +77,7 @@ public class Interaction {
 			}
 		} catch (Exception e) {
 			System.out
-					.println("WARNING: Desktop API seams to be not supported. Trying to open using CLI.");
+					.println("WARNING: Desktop API seems to be unsupported. Trying to open using CLI.");
 			try {
 				Process p = Runtime.getRuntime().exec(
 						new String[] { "firefox", file.toString() });

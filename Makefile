@@ -5,16 +5,16 @@ VERSION=0.4.6
 all:
 	mkdir -p bin/
 	rm -rf bin/*
-	javac -O -d bin/ -sourcepath "src:resources:language:icons" -classpath "lib/*" src/gui/Main.java
+	javac -O -d bin/ -sourcepath "src:resources" -classpath "lib/*" src/gui/Main.java
 
 jar: all
 	ant jar
 
 test: all
-	java -cp "bin:lib/*:language:icons:resources" gui.Main
+	java -cp "bin:lib/*:resources" gui.Main
 
 prof: all
-	java -cp "bin:lib/*:language:icons:resources" -prof gui.Main
+	java -cp "bin:lib/*:resources" -prof gui.Main
 
 install: jar
 	mkdir -p ${DESTDIR}/usr/share/openttt

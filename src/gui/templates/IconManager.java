@@ -5,7 +5,7 @@ import java.net.URL;
 import javax.swing.ImageIcon;
 
 public class IconManager {
-	private static String iconPath = "";
+	private static String iconPath = "icons/";
 	private static String px = "48";
 	private static String px_small = "22";
 	private static String suffix = ".png";
