@@ -66,6 +66,7 @@ public class JTreeView extends JPanel {
 
 	@Override
 	public void paint(Graphics g) {
+		super.paint(g);
 		for (Entry<Tree, Player> p : players.entrySet())
 			l = Math.max(g.getFontMetrics()
 					.stringWidth(p.getValue().toString()) + 8, l);
