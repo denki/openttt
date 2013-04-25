@@ -205,7 +205,6 @@ public class JKnockOutBuilder extends View {
 
 	public void importFile(String fileName) {
 		try {
-			System.out.println(fileName);
 			InputStream str = ClassLoader.getSystemClassLoader()
 					.getResourceAsStream(fileName);
 			BufferedReader in = new BufferedReader(new InputStreamReader(str));

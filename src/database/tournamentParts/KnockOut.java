@@ -51,24 +51,19 @@ public class KnockOut extends Commandable {
 	}
 
 	private Tree setPlayers(Queue<Tree> st) {
-		System.out.println("len = " + st.size());
 		if (st.size() == 1)
 			return st.poll();
 		Tree t1, t2;
 		Queue<Tree> st1 = new LinkedList<Tree>();
 		while (!st.isEmpty()) {
 			t1 = st.poll();
-			System.out.println("t1 = " + t1);
 			t2 = st.poll();
-			System.out.println("t2 = " + t2);
 			if (t1 == null)
 				st1.add(t2);
 			else if (t2 == null)
 				st1.add(t1);
-			else {
-				System.out.println(players.get(t1) + ", " + players.get(t2));
+			else
 				st1.add(new Binary(t1, t2));
-			}
 		}
 		return setPlayers(st1);
 	}

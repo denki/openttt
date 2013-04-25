@@ -161,11 +161,6 @@ public class Tournament {
 	public List<Player> getRanking() {
 		List<Player> result = new ArrayList<Player>();
 		if (properties.DO_KNOCKOUT) {
-//			for (int i = knockOut.getTree().size() - 1; i >= 0; i--)
-//				for (Player p : knockOut.getTree().get(i))
-//					if (!result.contains(p))
-//						if (p != null)
-//							result.add(p);
 			return knockOut.getRanking();
 		} else {
 			result.addAll(qualifying.getGroups().get(0).getPlayers());
@@ -197,8 +192,9 @@ public class Tournament {
 			if (properties.DO_QUALIFYING & properties.DO_KNOCKOUT)
 				state = 21;
 			else {
-				while (qualifying.getGroups().size() > 1){
-					Group g = qualifying.getGroups().get(qualifying.getGroups().size() - 1);
+				while (qualifying.getGroups().size() > 1) {
+					Group g = qualifying.getGroups().get(
+							qualifying.getGroups().size() - 1);
 					List<Player> plrs = g.getPlayers();
 					for (Player p : plrs)
 						qualifying.getUnassigned().add(p);
@@ -309,13 +305,10 @@ public class Tournament {
 		if (knockOut != null) {
 			List<Match> matches = knockOut.getMatches();
 			knockOut = k;
-			for (Match m : matches) {
-				System.out.println(m);
+			for (Match m : matches)
 				k.addMatch(m);
-			}
-		} else {
+		} else
 			knockOut = k;
-		}
 	}
 
 	public void setName(String name) {
