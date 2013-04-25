@@ -1,15 +1,13 @@
 package database.tournamentParts;
 
-import java.io.InputStream;
-
 import gui.Language;
 
 public class Template {
-	private InputStream stream;
+	private String path;
 	private int groupNum, playerNum;
 
-	public Template(InputStream str, int groupNum2, int playerNum2) {
-		stream = str;
+	public Template(String path, int groupNum2, int playerNum2) {
+		this.path = path;
 		groupNum = groupNum2;
 		playerNum = playerNum2;
 	}
@@ -19,8 +17,8 @@ public class Template {
 				+ Language.get("players") + ": " + playerNum + "<html>";
 	}
 
-	public InputStream getInputStream() {
-		return stream;
+	public String getPath() {
+		return path;
 	}
 
 	@Override

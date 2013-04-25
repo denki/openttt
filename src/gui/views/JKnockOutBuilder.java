@@ -96,18 +96,14 @@ public class JKnockOutBuilder extends View {
 			else
 				players.addAll(g.getPlayersByPlace(from, to));
 
-		ti = new JTemplateImporter("ko_templates/", qualifying.getGroups().size(),
-				qualifying.getGroups().get(0).getSize());
+		ti = new JTemplateImporter("ko_templates/", qualifying.getGroups()
+				.size(), to - from + 1);
 		ti.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		ti.addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent arg0) {
 				if (!ti.isSelectionEmpty()) {
-					int idx = ti.getSelectedIndex();
-					InputStream str = ((Template) ti.getSelectedValue()).getInputStream();
-					if (str != null)
-						importFile(str);
-					ti.setSelectedIndex(idx);
+					importFile(ti.getSelectedValue().getPath());
 				}
 			}
 		});
@@ -157,18 +153,10 @@ public class JKnockOutBuilder extends View {
 				JFileChooser chooser = new JFileChooser();
 				int returnVal = chooser.showOpenDialog(null);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					InputStream str;
-					try {
-						str = new FileInputStream(chooser.getSelectedFile().getAbsoluteFile()
-								.getAbsolutePath());
-						importFile(str);
-					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
+					String str = chooser.getSelectedFile().getAbsoluteFile()
+							.getAbsolutePath();
+					importFile(str);
 				}
-
 			}
 		};
 
@@ -199,19 +187,6 @@ public class JKnockOutBuilder extends View {
 		gbc.weightx = 1;
 		gbc.weighty = 1;
 		add(pan, gbc);
-//		List<List<Player>> tree = main.getTournament().getKnockOut().getTree();
-//		if (tree.isEmpty()) {
-//			if (ti.count() == 1)
-//				ti.setSelectedIndex(0);
-//		} else {
-//			int i = 0;
-//			for (JComboBox jcb : jComboBoxes) {
-//				if (tree.get(0).size() > i) {
-//					jcb.setSelectedItem(tree.get(0).get(i));
-//					i++;
-//				}
-//			}
-//		}
 	}
 
 	@Override
@@ -231,12 +206,12 @@ public class JKnockOutBuilder extends View {
 		return "1111001111";
 	}
 
-	public void importFile(InputStream file) {
+	public void importFile(String fileName) {
 		try {
-			// System.out.println(fileName);
-			// InputStream str =
-			// ClassLoader.getSystemClassLoader().getResourceAsStream(fileName);
-			BufferedReader in = new BufferedReader(new InputStreamReader(file));
+			System.out.println(fileName);
+			InputStream str = ClassLoader.getSystemClassLoader()
+					.getResourceAsStream(fileName);
+			BufferedReader in = new BufferedReader(new InputStreamReader(str));
 			String line = null;
 			String[] splitted;
 			int from = 0, to = 0;
@@ -283,6 +258,9 @@ public class JKnockOutBuilder extends View {
 	@Override
 	public void refresh() {
 		ti.clearSelection();
+		int ppg = ((Integer) jToPlace.getValue())
+				- ((Integer) jOffset.getValue()) + 1;
+		ti.setPlayersPerGroup(ppg);
 		players = new ArrayList<Player>();
 		players.add(Player.getNobody());
 		List<Group> groups = qualifying.getGroups();

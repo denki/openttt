@@ -13,28 +13,33 @@ import javax.swing.ListCellRenderer;
 import database.tournamentParts.Template;
 
 @SuppressWarnings("serial")
-public class JTemplateImporter extends JList {
-	List<Template> templates;
+public class JTemplateImporter extends JList<Template> {
+	private int groupNum;
+	private String dir;
+	private List<Template> templates;
 
-	public JTemplateImporter(String directory, final int groupNum,
+	public JTemplateImporter(String directory, int groupNum,
 			final int playerNum) {
 		super();
 		templates = new ArrayList<Template>();
+		dir = directory;
+		this.groupNum = groupNum;
 		InputStream str = ClassLoader.getSystemClassLoader()
 				.getResourceAsStream(
 						directory + "ko-" + groupNum + "gr-" + playerNum
 								+ "pl.otk");
 		if (str != null)
-			templates.add(new Template(str, groupNum, playerNum));
+			templates.add(new Template(directory + "ko-" + groupNum + "gr-"
+					+ playerNum + "pl.otk", groupNum, playerNum));
 
 		setListData(templates.toArray(new Template[0]));
-		setCellRenderer(new ListCellRenderer() {
+		setCellRenderer(new ListCellRenderer<Template>() {
 			@Override
-			public Component getListCellRendererComponent(JList list,
-					Object value, int index, boolean isSelected,
+			public Component getListCellRendererComponent(JList<? extends Template> list,
+					Template value, int index, boolean isSelected,
 					boolean cellHasFocus) {
 				JLabel lbl = new JLabel(value.toString());
-				lbl.setToolTipText(((Template) value).getDescription());
+				lbl.setToolTipText(value.getDescription());
 				if (isSelected) {
 					lbl.setOpaque(true);
 					lbl.setForeground(Color.white);
@@ -48,5 +53,17 @@ public class JTemplateImporter extends JList {
 
 	public int count() {
 		return templates.size();
+	}
+
+	public void setPlayersPerGroup(int ppg) {
+		templates.clear();
+		InputStream str = ClassLoader.getSystemClassLoader()
+				.getResourceAsStream(
+						dir + "ko-" + groupNum + "gr-" + ppg
+								+ "pl.otk");
+		if (str != null)
+			templates.add(new Template(dir + "ko-" + groupNum + "gr-"
+					+ ppg + "pl.otk", groupNum, ppg));
+		setListData(templates.toArray(new Template[0]));
 	}
 }
