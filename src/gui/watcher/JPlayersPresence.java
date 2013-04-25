@@ -10,6 +10,7 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -21,9 +22,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.TableColumnModelListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 import database.players.Player;
 import database.tournamentParts.Group;
@@ -54,11 +60,27 @@ public class JPlayersPresence extends Watcher {
 		}
 	}
 
+	private class BooleanTableCellRenderer implements TableCellRenderer {
+
+		private String name;
+
+		public BooleanTableCellRenderer(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public Component getTableCellRendererComponent(JTable table,
+				Object value, boolean isSelected, boolean hasFocus, int row,
+				int column) {
+			boolean checked = (Boolean) value;
+			return new JCheckBox(name, checked);
+		}
+
+	}
+
 	public JPlayersPresence(Main main) {
 		super(Language.get("presence"), main);
 		players = new ArrayList<Player>();
-		refreshList();
-
 		lFilter = new JLabel(Language.get("search"));
 
 		aFilter = new JTextField("");
@@ -76,7 +98,7 @@ public class JPlayersPresence extends Watcher {
 			public void keyPressed(KeyEvent arg0) {
 			}
 		});
-		
+
 		bFilter = new IconButton(new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -85,32 +107,9 @@ public class JPlayersPresence extends Watcher {
 			}
 		}, "clear_small");
 
-		table = new JTable(getTableCells(), new String[] {
-				Language.get("present"), Language.get("paid"),
-				Language.get("player") });
-		TableCellEditor df = new DefaultCellEditor(new JCheckBox(""));
-		TableCellRenderer cr = new TableCellRenderer() {
-			@Override
-			public Component getTableCellRendererComponent(JTable table,
-					Object value, boolean isSelected, boolean hasFocus,
-					int row, int column) {
-				if (column < 2) {
-					boolean checked = (Boolean) value;
-					return new JCheckBox("", checked);
-				}
-				String v = (String) value;
-				return new JLabel(v);
-			}
-		};
+		table = new JTable();
 
-		table.getColumnModel().getColumn(0).setCellEditor(df);
-		table.getColumnModel().getColumn(1).setCellEditor(df);
-		table.getColumnModel().getColumn(0).setCellRenderer(cr);
-		table.getColumnModel().getColumn(1).setCellRenderer(cr);
-		table.getColumnModel().getColumn(2).setCellRenderer(cr);
-		int size = 60;
-		table.getColumnModel().getColumn(0).setMaxWidth(size);
-		table.getColumnModel().getColumn(1).setMaxWidth(size);
+		refresh();
 
 		table.addMouseListener(new MouseListener() {
 			@Override
@@ -169,32 +168,31 @@ public class JPlayersPresence extends Watcher {
 	@Override
 	public void refresh() {
 		refreshList();
-		table.setModel(new DefaultTableModel(getTableCells(), new String[] {
-				Language.get("present"), Language.get("paid"),
-				Language.get("player") }));
-		TableCellEditor df = new DefaultCellEditor(new JCheckBox(""));
-		TableCellRenderer cr = new TableCellRenderer() {
-			@Override
-			public Component getTableCellRendererComponent(JTable table,
-					Object value, boolean isSelected, boolean hasFocus,
-					int row, int column) {
-				if (column < 2) {
-					boolean checked = (Boolean) value;
-					return new JCheckBox("", checked);
-				}
-				String v = (String) value;
-				return new JLabel(v);
-			}
-		};
+		((DefaultTableModel) table.getModel()).setDataVector(getTableCells(),
+				new String[] { "", "", Language.get("player") });
 
-		table.getColumnModel().getColumn(0).setCellEditor(df);
-		table.getColumnModel().getColumn(1).setCellEditor(df);
-		table.getColumnModel().getColumn(0).setCellRenderer(cr);
-		table.getColumnModel().getColumn(1).setCellRenderer(cr);
-		table.getColumnModel().getColumn(2).setCellRenderer(cr);
-		int size = 60;
-		table.getColumnModel().getColumn(0).setMaxWidth(size);
-		table.getColumnModel().getColumn(1).setMaxWidth(size);
+		table.getColumnModel()
+				.getColumn(0)
+				.setCellRenderer(
+						new BooleanTableCellRenderer(Language.get("present")));
+		table.getColumnModel()
+				.getColumn(1)
+				.setCellRenderer(
+						new BooleanTableCellRenderer(Language.get("paid")));
+
+		table.getColumnModel().setColumnMargin(3);
+
+		table.getColumnModel()
+				.getColumn(0)
+				.setMaxWidth(
+						new JCheckBox(Language.get("present"))
+								.getPreferredSize().width
+								+ 2 * table.getColumnModel().getColumnMargin());
+		table.getColumnModel()
+				.getColumn(1)
+				.setMaxWidth(
+						new JCheckBox(Language.get("paid")).getPreferredSize().width
+								+ 2 * table.getColumnModel().getColumnMargin());
 
 		repaint();
 	}
