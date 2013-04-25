@@ -18,7 +18,7 @@ import database.tournamentParts.Qualifying;
 @SuppressWarnings("serial")
 public class JGroupTable extends JPanel implements ActionListener {
 	public static int NAME_ROW_WIDTH = 280;
-	private JComboBox gruppen;
+	private JComboBox<Group> groups;
 	private Qualifying qualifying;
 	private JTable table;
 	private JCommandableProgress prog;
@@ -39,7 +39,7 @@ public class JGroupTable extends JPanel implements ActionListener {
 
 	public JGroupTable(Qualifying q, Group g) {
 		this(q);
-		gruppen.setSelectedItem(g);
+		groups.setSelectedItem(g);
 	}
 
 	@Override
@@ -53,13 +53,13 @@ public class JGroupTable extends JPanel implements ActionListener {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout());
 
-		gruppen = new JComboBox(qualifying.getGroups().toArray());
-		gruppen.addActionListener(this);
-		panel.add(gruppen, BorderLayout.NORTH);
+		groups = new JComboBox<Group>(qualifying.getGroups().toArray(new Group[0]));
+		groups.addActionListener(this);
+		panel.add(groups, BorderLayout.NORTH);
 
 		// data[row][column]
-		String[][] data = Calculator.tabular((Group) gruppen.getSelectedItem());
-		String[] columnNames = Calculator.tabularHead((Group) gruppen
+		String[][] data = Calculator.tabular((Group) groups.getSelectedItem());
+		String[] columnNames = Calculator.tabularHead((Group) groups
 				.getSelectedItem());
 
 		table = new JTable();
@@ -84,10 +84,10 @@ public class JGroupTable extends JPanel implements ActionListener {
 	}
 	
 	public void refresh(boolean repaint) {
-		String[][] data = Calculator.tabular((Group) gruppen.getSelectedItem());
-		String[] columnNames = Calculator.tabularHead((Group) gruppen
+		String[][] data = Calculator.tabular((Group) groups.getSelectedItem());
+		String[] columnNames = Calculator.tabularHead((Group) groups
 				.getSelectedItem());
-		prog.setCommandable((Group) gruppen.getSelectedItem());
+		prog.setCommandable((Group) groups.getSelectedItem());
 		ReadOnlyTableModel tm = new ReadOnlyTableModel();
 		tm.setDataVector(data, columnNames);
 		table.setModel(tm);
@@ -100,7 +100,7 @@ public class JGroupTable extends JPanel implements ActionListener {
 
 	@Override
 	public void repaint() {
-		if (gruppen != null & table != null) {
+		if (groups != null & table != null) {
 			table.getColumnModel().getColumn(0).setPreferredWidth(45);
 			table.getColumnModel().getColumn(1).setPreferredWidth(NAME_ROW_WIDTH);
 		}
@@ -110,6 +110,6 @@ public class JGroupTable extends JPanel implements ActionListener {
 	}
 
 	public void setComboBoxEditable(boolean b) {
-		gruppen.setEditable(false);
+		groups.setEditable(b);
 	}
 }

@@ -49,7 +49,7 @@ public class JKnockOutPreBuilder extends View implements ActionListener {
 
 	private String actualFile;
 	private JSpinner jGroupNum, jPlaceFrom, jPlaceTo;
-	private List<JComboBox> pComboBoxes;
+	private List<JComboBox<String>> pComboBoxes;
 	private PreKnockOut preKnockOut;
 
 	private JPanel pRight, pan;
@@ -84,7 +84,7 @@ public class JKnockOutPreBuilder extends View implements ActionListener {
 			}
 		});
 
-		pComboBoxes = new ArrayList<JComboBox>();
+		pComboBoxes = new ArrayList<JComboBox<String>>();
 		pRight = new JPanel();
 		generateWindow();
 	}
@@ -147,7 +147,6 @@ public class JKnockOutPreBuilder extends View implements ActionListener {
 			jGroupNum.setValue(preKnockOut.getGroup());
 			jPlaceFrom.setValue(preKnockOut.getStart());
 			jPlaceTo.setValue(preKnockOut.getEnd());
-			System.out.println("refreshing");
 			refresh();
 			for (int i = 0; i < preKnockOut.getPlaces().length; i++) {
 				pComboBoxes.get(i).setSelectedIndex(preKnockOut.getPlaces()[i]);
@@ -211,7 +210,7 @@ public class JKnockOutPreBuilder extends View implements ActionListener {
 		}
 		
 		for (int i = 0; i < Calculator.nextPowerOfTwo(plrs.size() - 1); i++) {
-			final JComboBox jCB = new JComboBox(plrs.toArray());
+			final JComboBox<String> jCB = new JComboBox<String>(plrs.toArray(new String[0]));
 			jCB.setAction(new ChangeAction(i));
 			pComboBoxes.add(jCB);
 			JPanel jPan = new JPanel();
@@ -237,9 +236,9 @@ public class JKnockOutPreBuilder extends View implements ActionListener {
 				for (int i = placeFrom - 1; i < placeTo; i++)
 					plrs.add((i + 1) + ". " + Language.get("group") + " " + (j + 1));
 			
-			for (JComboBox jcb : pComboBoxes) {
+			for (JComboBox<String> jcb : pComboBoxes) {
 				int idx = jcb.getSelectedIndex();
-				jcb.setModel(new DefaultComboBoxModel(plrs.toArray()));
+				jcb.setModel(new DefaultComboBoxModel<String>(plrs.toArray(new String[0])));
 				jcb.setSelectedIndex(idx);
 			}
 		}

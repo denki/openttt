@@ -58,8 +58,8 @@ public class JPlayers extends View implements KeyListener {
 			jAddGroup, jDelGroup, jPlayerDown, jPlayerUp, jImport;
 	
 	private JTextField jPlayerName, jFilter;
-	private JList jUnassignedPlayers, jGroupedPlayers;
-	private JComboBox jGroups;
+	private JList<Player> jUnassignedPlayers, jGroupedPlayers;
+	private JComboBox<Group> jGroups;
 	
 	class DefaultMouseListener implements MouseListener {
 		@Override
@@ -192,11 +192,10 @@ public class JPlayers extends View implements KeyListener {
 		}
 	};
 
-	ListCellRenderer rnd = new ListCellRenderer() {
+	ListCellRenderer<Player> rnd = new ListCellRenderer<Player>() {
 		@Override
-		public Component getListCellRendererComponent(JList list, Object value,
+		public Component getListCellRendererComponent(JList<? extends Player> list, Player plr,
 				int index, boolean isSelected, boolean cellHasFocus) {
-			Player plr = (Player) value;
 			final JPlayerCheckBox cb = new JPlayerCheckBox(plr);
 			cb.setOpaque(true);
 			if (isSelected) {
@@ -280,7 +279,7 @@ public class JPlayers extends View implements KeyListener {
 	@Override
 	public void generateWindow() {
 		// non-button elements
-		jUnassignedPlayers = new JList();
+		jUnassignedPlayers = new JList<Player>();
 		jUnassignedPlayers.addMouseListener(new DefaultMouseListener(){
 			@Override
 			public void mouseClicked(MouseEvent arg0){
@@ -292,7 +291,7 @@ public class JPlayers extends View implements KeyListener {
 						if (x < 21.0) {
 							int idx1 = jUnassignedPlayers.locationToIndex(arg0.getPoint());
 							if (idx1 != -1) {
-								Player pl = (Player) jUnassignedPlayers.getModel().getElementAt(idx1);
+								Player pl = jUnassignedPlayers.getModel().getElementAt(idx1);
 								pl.setThere(!pl.isThere());
 //								main.setEnabledPattern(getIconEnabledPattern());
 								main.refreshState();
@@ -304,7 +303,7 @@ public class JPlayers extends View implements KeyListener {
 					if (arg0.getClickCount() == 1) {
 						int idx2 = jUnassignedPlayers.locationToIndex(arg0.getPoint());
 						if (idx2 != -1) {
-							Player pl = (Player) jUnassignedPlayers.getModel().getElementAt(idx2);
+							Player pl = jUnassignedPlayers.getModel().getElementAt(idx2);
 							pl.setThere(!pl.isThere());
 							main.setEnabledPattern(getIconEnabledPattern());
 							repaint();
@@ -323,7 +322,7 @@ public class JPlayers extends View implements KeyListener {
 		});
 		jUnassignedPlayers.setCellRenderer(rnd);
 
-		jGroupedPlayers = new JList();
+		jGroupedPlayers = new JList<Player>();
 		jGroupedPlayers.addMouseListener(new DefaultMouseListener() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -335,7 +334,7 @@ public class JPlayers extends View implements KeyListener {
 						if (x < 21.0) {
 							int idx1 = jGroupedPlayers.locationToIndex(arg0.getPoint());
 							if (idx1 != -1) {
-								Player pl = (Player) jGroupedPlayers.getModel().getElementAt(idx1);
+								Player pl = jGroupedPlayers.getModel().getElementAt(idx1);
 								pl.setThere(!pl.isThere());
 //								main.setEnabledPattern(getIconEnabledPattern());
 								main.refreshState();
@@ -347,7 +346,7 @@ public class JPlayers extends View implements KeyListener {
 					if (arg0.getClickCount() == 1) {
 						int idx2 = jGroupedPlayers.locationToIndex(arg0.getPoint());
 						if (idx2 != -1) {
-							Player pl = (Player) jGroupedPlayers.getModel().getElementAt(idx2);
+							Player pl = jGroupedPlayers.getModel().getElementAt(idx2);
 							pl.setThere(!pl.isThere());
 							main.setEnabledPattern(getIconEnabledPattern());
 							repaint();
@@ -381,7 +380,7 @@ public class JPlayers extends View implements KeyListener {
 			}
 		};
 		jFilter.addKeyListener(this);
-		jGroups = new JComboBox(groups.toArray(new Group[0])) {
+		jGroups = new JComboBox<Group>(groups.toArray(new Group[0])) {
 			@Override
 			public Dimension getPreferredSize() {
 				return new Dimension(0, 0);
@@ -613,8 +612,8 @@ public class JPlayers extends View implements KeyListener {
 
 	private void refreshLists() {
 		if (groups.size() != jGroups.getModel().getSize()) {
-			DefaultComboBoxModel model = new DefaultComboBoxModel(
-					groups.toArray());
+			DefaultComboBoxModel<Group> model = new DefaultComboBoxModel<Group>(
+					groups.toArray(new Group[0]));
 			jGroups.setModel(model);
 		}
 		List<Player> lst = new ArrayList<Player>();
@@ -631,12 +630,12 @@ public class JPlayers extends View implements KeyListener {
 				if (contains)
 					lst.add(p);
 			}
-		jUnassignedPlayers.setListData(lst.toArray());
+		jUnassignedPlayers.setListData(lst.toArray(new Player[0]));
 		if (jGroups.getSelectedItem() != null)
 			jGroupedPlayers.setListData(((Group) jGroups.getSelectedItem())
 					.getPlayers().toArray(new Player[0]));
 		else
-			jGroupedPlayers.setListData(new int[][] {});
+			jGroupedPlayers.setListData(new Player[0]);
 	}
 
 	@Override

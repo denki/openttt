@@ -62,19 +62,21 @@ public class ImportPlayers extends Watcher {
 	private JSpinner dataStartIdx, dataEndIdx;
 	private Action aCancel, aAccept;
 	private JButton bCancel, bAccept;
-	private List<JComboBox> columnAssociations;
+	private List<JComboBox<String>> columnAssociations;
 	private List<JLabel> lbls;
-	
-	
-	public ImportPlayers(Main main, String fileName) throws InconsistentStateException {
+
+	public ImportPlayers(Main main, String fileName)
+			throws InconsistentStateException {
 		super(Language.get("importPlayers"), main);
 		Tournament t = main.getTournament();
 		this.fileName = fileName;
 		readFromFile();
 		table = new JTable(data, columnNames);
 		table.getColumnModel().getColumn(0).setMaxWidth(45);
-		dataStartIdx = new JSpinner(new SpinnerNumberModel(1, 1, data.length - 1, 1));
-		dataEndIdx = new JSpinner(new SpinnerNumberModel(data.length, 1, data.length, 1));
+		dataStartIdx = new JSpinner(new SpinnerNumberModel(1, 1,
+				data.length - 1, 1));
+		dataEndIdx = new JSpinner(new SpinnerNumberModel(data.length, 1,
+				data.length, 1));
 		lDataStartIdx = new JLabel(Language.get("dataStartIdx"));
 		lDataEndIdx = new JLabel(Language.get("dataEndIdx"));
 		aCancel = new AbstractAction() {
@@ -91,14 +93,16 @@ public class ImportPlayers extends Watcher {
 					accept();
 					dispose();
 				} catch (InputFormatException e1) {
-					System.out.println("ERROR: Player names have the wrong format.");
+					System.out
+							.println("ERROR: Player names have the wrong format.");
 				} catch (InconsistentStateException e1) {
-					System.out.println("ERROR: Tournament state is inconsistent.");
+					System.out
+							.println("ERROR: Tournament state is inconsistent.");
 				}
 			}
 		};
 		bAccept = new IconButton(aAccept, IconManager.getImageIcon("add"));
-		columnAssociations = new ArrayList<JComboBox>();
+		columnAssociations = new ArrayList<JComboBox<String>>();
 		lbls = new ArrayList<JLabel>();
 		String[] dataNames = null;
 		if (t.getSingle()) {
@@ -121,14 +125,17 @@ public class ImportPlayers extends Watcher {
 		mandatoryEntries.addAll(comboBoxEntries);
 		mandatoryEntries.remove(0);
 		for (int i = 0; i < dataNames.length; i++) {
-			JComboBox cb;
+			JComboBox<String> cb;
 			JLabel lbl;
 			if (isMandatory[i]) {
-				cb = new JComboBox(mandatoryEntries.toArray());
+				cb = new JComboBox<String>(
+						mandatoryEntries.toArray(new String[0]));
 				lbl = new JLabel(dataNames[i]);
-			} else { 
-				cb = new JComboBox(comboBoxEntries.toArray());
-				lbl = new JLabel(dataNames[i] + " (" + Language.get("optional") + ")");
+			} else {
+				cb = new JComboBox<String>(
+						comboBoxEntries.toArray(new String[0]));
+				lbl = new JLabel(dataNames[i] + " (" + Language.get("optional")
+						+ ")");
 			}
 			columnAssociations.add(cb);
 			lbls.add(lbl);
@@ -136,15 +143,18 @@ public class ImportPlayers extends Watcher {
 		generateWindow();
 	}
 
-	protected void accept() throws InputFormatException, InconsistentStateException {
-		List<String> toAdd = new ArrayList<String>(); 
+	protected void accept() throws InputFormatException,
+			InconsistentStateException {
+		List<String> toAdd = new ArrayList<String>();
 		Tournament t = main.getTournament();
 		String[] line;
-		for (int i = (Integer) dataStartIdx.getValue() - 1; i < Math.min((Integer) dataEndIdx.getValue(), data.length); i++) {
+		for (int i = (Integer) dataStartIdx.getValue() - 1; i < Math.min(
+				(Integer) dataEndIdx.getValue(), data.length); i++) {
 			line = data[i];
 			toAdd.clear();
-			for (JComboBox cb : columnAssociations) {
-				int idx = Arrays.asList(columnNames).indexOf(cb.getSelectedItem());
+			for (JComboBox<String> cb : columnAssociations) {
+				int idx = Arrays.asList(columnNames).indexOf(
+						cb.getSelectedItem());
 				if (idx != -1) {
 					toAdd.add(line[idx]);
 				} else {
@@ -165,7 +175,7 @@ public class ImportPlayers extends Watcher {
 		}
 		main.refreshState();
 	}
-	
+
 	private void readFromFile() {
 		if (fileName.toLowerCase().endsWith(".csv")) {
 			readFromCsv();
@@ -189,7 +199,8 @@ public class ImportPlayers extends Watcher {
 			String[] splitted;
 			int lineNum = 1;
 			while ((line = in.readLine()) != null) {
-				splitted = (lineNum + ", " + line).replace("\"", "").split(separator);
+				splitted = (lineNum + ", " + line).replace("\"", "").split(
+						separator);
 				maxColums = Math.max(maxColums, splitted.length);
 				result.add(splitted);
 				lineNum++;
@@ -204,7 +215,7 @@ public class ImportPlayers extends Watcher {
 			columnNames[i] = Language.get("column") + " " + i;
 		}
 	}
-	
+
 	private void readFromXls() {
 		List<String[]> xlsData = new ArrayList<String[]>();
 		FileInputStream fis;
@@ -222,7 +233,7 @@ public class ImportPlayers extends Watcher {
 				for (Cell c : r) {
 					cellCount++;
 					switch (c.getCellType()) {
-					case Cell.CELL_TYPE_STRING: 
+					case Cell.CELL_TYPE_STRING:
 						cells.add(c.getStringCellValue());
 						break;
 					case Cell.CELL_TYPE_BLANK:
@@ -237,10 +248,11 @@ public class ImportPlayers extends Watcher {
 						if (dNum - iNum != 0.0) {
 							cells.add(c.toString());
 						} else {
-							cells.add(""+iNum);
+							cells.add("" + iNum);
 						}
 						break;
-					default: cells.add(c.toString());
+					default:
+						cells.add(c.toString());
 					}
 				}
 				maxColums = Math.max(maxColums, cellCount);
@@ -258,7 +270,7 @@ public class ImportPlayers extends Watcher {
 			System.out.println("ERROR: I/O Exception.");
 		}
 	}
-	
+
 	private void readFromXlsx() {
 		List<String[]> xlsData = new ArrayList<String[]>();
 		FileInputStream fis;
@@ -276,7 +288,7 @@ public class ImportPlayers extends Watcher {
 				for (Cell c : r) {
 					cellCount++;
 					switch (c.getCellType()) {
-					case Cell.CELL_TYPE_STRING: 
+					case Cell.CELL_TYPE_STRING:
 						cells.add(c.getStringCellValue());
 						break;
 					case Cell.CELL_TYPE_BLANK:
@@ -291,10 +303,11 @@ public class ImportPlayers extends Watcher {
 						if (dNum - iNum != 0.0) {
 							cells.add(c.toString());
 						} else {
-							cells.add(""+iNum);
+							cells.add("" + iNum);
 						}
 						break;
-					default: cells.add(c.toString());
+					default:
+						cells.add(c.toString());
 					}
 				}
 				maxColums = Math.max(maxColums, cellCount);
@@ -312,7 +325,7 @@ public class ImportPlayers extends Watcher {
 			System.out.println("ERROR: I/O Exception.");
 		}
 	}
-	
+
 	public void readFromOds() {
 		List<String[]> odsData = new ArrayList<String[]>();
 		OdfSpreadsheetDocument ods;
@@ -326,15 +339,20 @@ public class ImportPlayers extends Watcher {
 				cells.add("" + (rIdx + 1));
 				boolean found = false;
 				for (int cIdx = 0; cIdx < table.getColumnCount(); cIdx++) {
-					String text = table.getCellByPosition(cIdx, rIdx).getDisplayText();
-					if (!text.equals("")) found = true;
+					String text = table.getCellByPosition(cIdx, rIdx)
+							.getDisplayText();
+					if (!text.equals(""))
+						found = true;
 					cells.add(text);
 				}
-				if (!found & rIdx > 10) break;
+				if (!found & rIdx > 10)
+					break;
 				maxColumns = Math.max(maxColumns, table.getColumnCount() + 1);
-				if (found) odsData.add(cells.toArray(new String[0]));
+				if (found)
+					odsData.add(cells.toArray(new String[0]));
 			}
-			if (odsData.size() == 0) throw new InconsistentStateException();
+			if (odsData.size() == 0)
+				throw new InconsistentStateException();
 			data = odsData.toArray(new String[][] {});
 			columnNames = new String[maxColumns];
 			columnNames[0] = "#";
@@ -349,12 +367,12 @@ public class ImportPlayers extends Watcher {
 			System.out.println("ERROR: Unknown Error reading file.");
 		}
 	}
-	
+
 	@Override
 	public void generateWindow() {
 		setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
-		
+
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.fill = GridBagConstraints.BOTH;
@@ -363,55 +381,55 @@ public class ImportPlayers extends Watcher {
 		gbc.weightx = 0;
 		gbc.weighty = 0;
 		gbc.insets = new Insets(5, 5, 5, 5);
-		
+
 		add(lDataStartIdx, gbc);
-		
+
 		gbc.gridx = 1;
 		gbc.weightx = 1;
-		
+
 		add(dataStartIdx, gbc);
-		
+
 		gbc.gridx = 0;
 		gbc.gridy = 1;
 		gbc.weightx = 0;
-		
+
 		add(lDataEndIdx, gbc);
-		
+
 		gbc.gridx = 1;
 		gbc.weightx = 1;
-		
+
 		add(dataEndIdx, gbc);
-		
-		for (int i = 0; i< lbls.size(); i++) {
+
+		for (int i = 0; i < lbls.size(); i++) {
 			gbc.gridx = 0;
 			gbc.gridy = 2 + i;
 			gbc.weightx = 0;
-			
+
 			add(lbls.get(i), gbc);
-			
+
 			gbc.gridx = 1;
 			gbc.weightx = 1;
-			
+
 			add(columnAssociations.get(i), gbc);
 		}
-		
+
 		gbc.gridy = 2 + lbls.size();
 		gbc.gridx = 0;
 		gbc.weighty = 1;
 		gbc.gridwidth = 2;
-		
+
 		add(new JScrollPane(table), gbc);
-		
+
 		JPanel pan = new JPanel();
 		pan.setLayout(new BorderLayout());
 		pan.add(bCancel, BorderLayout.WEST);
 		pan.add(bAccept, BorderLayout.EAST);
-		
+
 		gbc.gridy = 3 + lbls.size();
 		gbc.weighty = 0;
-		
+
 		add(pan, gbc);
-		
+
 		pack();
 		setVisible(true);
 	}
@@ -420,7 +438,7 @@ public class ImportPlayers extends Watcher {
 	public void refresh() {
 		repaint();
 	}
-	
+
 	@Override
 	public void repaint() {
 		setTitle(Language.get("importPlayers"));
@@ -449,7 +467,8 @@ public class ImportPlayers extends Watcher {
 				try {
 					throw new InconsistentStateException();
 				} catch (InconsistentStateException e) {
-					System.out.println("ERROR: Tournament has inconsistent state.");
+					System.out
+							.println("ERROR: Tournament has inconsistent state.");
 				}
 			}
 			List<String> comboBoxEntries = new ArrayList<String>();
@@ -463,18 +482,24 @@ public class ImportPlayers extends Watcher {
 			for (int i = 0; i < columnAssociations.size(); i++) {
 				sel = columnAssociations.get(i).getSelectedIndex();
 				if (isMandatory[i]) {
-					columnAssociations.get(i).setModel(new DefaultComboBoxModel(mandatoryEntries.toArray()));
+					columnAssociations.get(i).setModel(
+							new DefaultComboBoxModel<String>(mandatoryEntries
+									.toArray(new String[0])));
 					lbls.get(i).setText(dataNames[i]);
-				} else { 
-					columnAssociations.get(i).setModel(new DefaultComboBoxModel(comboBoxEntries.toArray()));
-					lbls.get(i).setText(dataNames[i] + " (" + Language.get("optional") + ")");
+				} else {
+					columnAssociations.get(i).setModel(
+							new DefaultComboBoxModel<String>(comboBoxEntries
+									.toArray(new String[0])));
+					lbls.get(i).setText(
+							dataNames[i] + " (" + Language.get("optional")
+									+ ")");
 				}
 				columnAssociations.get(i).setSelectedIndex(sel);
 			}
 		}
 		super.repaint();
 	}
-	
+
 	@Override
 	public void dispose() {
 		main.removeWatcher(this);

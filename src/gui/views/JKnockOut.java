@@ -2,7 +2,6 @@ package gui.views;
 
 import gui.Main;
 import gui.components.DragScrollListener;
-import gui.components.JGameCommander;
 import gui.components.JListGameCommander;
 import gui.components.JTreeView;
 import gui.templates.View;
@@ -17,7 +16,7 @@ import database.tournamentParts.KnockOut;
 @SuppressWarnings("serial")
 public class JKnockOut extends View {
 
-	private JGameCommander jgc;
+	private JListGameCommander jgc;
 	private KnockOut knockout;
 
 	private JTreeView tv;

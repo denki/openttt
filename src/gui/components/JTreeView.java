@@ -25,6 +25,10 @@ import database.tournamentParts.KnockOut;
 public class JTreeView extends JPanel {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7996785608222443977L;
+	/**
 	 * Distances between the cells
 	 */
 	private static final int dx1 = 10;

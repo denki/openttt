@@ -32,7 +32,7 @@ public class Preferences extends JFrame implements ItemListener {
 
 	private CheckboxGroup cbg1, cbg2;
 
-	private JComboBox cBox1, cBox2;
+	private JComboBox<String> cBox1, cBox2;
 	private JPanel pan1, pan2, pan3;
 	private JLabel lIconSize, lIconBarPosition;
 
@@ -175,7 +175,7 @@ public class Preferences extends JFrame implements ItemListener {
 			pan2.add(cb);
 		}
 
-		cBox1 = new JComboBox(new String[] { "12", "16", "20", "22", "24",
+		cBox1 = new JComboBox<String>(new String[] { "12", "16", "20", "22", "24",
 				"28", "32", "36", "40", "44", "48", "52", "56", "60" });
 		cBox1.setSelectedItem(IconManager.getPx());
 		cBox1.addActionListener(new ActionListener() {
@@ -188,7 +188,7 @@ public class Preferences extends JFrame implements ItemListener {
 			}
 		});
 
-		cBox2 = new JComboBox(new String[] { Language.get("north"),
+		cBox2 = new JComboBox<String>(new String[] { Language.get("north"),
 				Language.get("south") });
 		if (StandartButtonPanel.getPos().equals(BorderLayout.SOUTH))
 			cBox2.setSelectedIndex(1);
@@ -241,7 +241,7 @@ public class Preferences extends JFrame implements ItemListener {
 		if (lIconBarPosition != null)
 			lIconBarPosition.setText(Language.get("iconBarPosition"));
 		if (cBox2 != null)
-			cBox2.setModel(new DefaultComboBoxModel(new String[] { Language.get("north"),
+			cBox2.setModel(new DefaultComboBoxModel<String>(new String[] { Language.get("north"),
 					Language.get("south") }));
 		super.repaint();
 	}

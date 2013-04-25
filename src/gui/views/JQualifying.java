@@ -1,7 +1,6 @@
 package gui.views;
 
 import gui.Main;
-import gui.components.JGameCommander;
 import gui.components.JGroupTable;
 import gui.components.JListGameCommander;
 import gui.templates.View;
@@ -15,7 +14,7 @@ import javax.swing.JSplitPane;
 @SuppressWarnings("serial")
 public class JQualifying extends View {
 
-	private JGameCommander jgc;
+	private JListGameCommander jgc;
 	private JGroupTable jgt;
 
 	public JQualifying(Main m) {

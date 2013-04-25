@@ -13,8 +13,6 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -45,20 +43,19 @@ import database.Calculator;
 import database.players.Player;
 import database.tournamentParts.Group;
 import database.tournamentParts.Qualifying;
-import database.tournamentParts.Template;
 
 @SuppressWarnings("serial")
 public class JKnockOutBuilder extends View {
-	class ComboRenderer implements ListCellRenderer {
+	class ComboRenderer implements ListCellRenderer<Player> {
 		@Override
-		public Component getListCellRendererComponent(JList list, Object value,
+		public Component getListCellRendererComponent(JList<? extends Player> list, Player value,
 				int index, boolean isSelected, boolean cellHasFocus) {
 			JLabel result;
 			if (value != null) {
-				if (((Player) value).isNobody()) {
+				if (value.isNobody()) {
 					result = new JLabel("<" + Language.get("nobody") + ">");
 				} else {
-					result = new JLabel(((Player) value).getPlayerPlaceGroup());
+					result = new JLabel(value.getPlayerPlaceGroup());
 				}
 			} else {
 				result = new JLabel("<" + Language.get("nobody") + ">");
@@ -73,7 +70,7 @@ public class JKnockOutBuilder extends View {
 	}
 
 	private List<JPanel> boxes;
-	private List<JComboBox> jComboBoxes;
+	private List<JComboBox<Player>> jComboBoxes;
 	private JButton jImport;
 	private JSpinner jOffset, jToPlace;
 	private JLabel lSurvivors;
@@ -144,7 +141,7 @@ public class JKnockOutBuilder extends View {
 		pan1_1.add(jToPlace);
 
 		// build pan2
-		jComboBoxes = new ArrayList<JComboBox>();
+		jComboBoxes = new ArrayList<JComboBox<Player>>();
 		refresh();
 
 		Action aImport = new AbstractAction(Language.get("import")) {
@@ -250,7 +247,7 @@ public class JKnockOutBuilder extends View {
 
 	public void next() {
 		List<Player> plrs = new ArrayList<Player>();
-		for (JComboBox box : jComboBoxes)
+		for (JComboBox<Player> box : jComboBoxes)
 			plrs.add((Player) box.getSelectedItem());
 		main.getTournament().getKnockOut().setPlayers(plrs);
 	}
@@ -274,9 +271,9 @@ public class JKnockOutBuilder extends View {
 						((Integer) jOffset.getValue()),
 						((Integer) jToPlace.getValue()) + 1));
 		pan2.removeAll();
-		jComboBoxes = new ArrayList<JComboBox>();
+		jComboBoxes = new ArrayList<JComboBox<Player>>();
 		for (int i = 0; i < Calculator.nextPowerOfTwo(players.size() - 1); i++) {
-			JComboBox box = new JComboBox(players.toArray());
+			JComboBox<Player> box = new JComboBox<Player>(players.toArray(new Player[0]));
 			box.setRenderer(new ComboRenderer());
 			box.addActionListener(new ActionListener() {
 				@Override
@@ -297,7 +294,7 @@ public class JKnockOutBuilder extends View {
 		pan2.setLayout(gl);
 
 		int j = 0;
-		for (JComboBox box : jComboBoxes) {
+		for (JComboBox<Player> box : jComboBoxes) {
 			j++;
 			JPanel panTemp = new JPanel();
 			panTemp.add(new JLabel("#" + j + ":"));
