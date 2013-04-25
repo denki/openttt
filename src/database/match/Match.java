@@ -102,15 +102,19 @@ public class Match extends Edge<Player> implements Comparable<Match> {
 
  	@Override
  	public int compareTo(Match arg0) {
- 		if (!isOK() & arg0.isOK())
+ 		if (!isOK() && arg0.isOK())
  			return -1;
- 		if (isOK() & !arg0.isOK())
+ 		if (isOK() && !arg0.isOK())
  			return 1;
+ 		if (!isOK() && !arg0.isOK())
+ 			return 0;
  		if (priority > arg0.priority)
  			return 1;
  		if (priority < arg0.priority)
  			return -1;
- 		return 0;
+ 		if (startedDate == null || arg0.startedDate == null)
+ 			return 0;
+ 		return startedDate.compareTo(arg0.startedDate);
  	}
 
 	@Override

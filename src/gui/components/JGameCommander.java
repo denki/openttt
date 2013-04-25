@@ -31,11 +31,11 @@ import database.match.Commandable;
 import database.match.Match;
 
 @SuppressWarnings("serial")
-public abstract class JGameCommander extends JPanel {
+public abstract class JGameCommander<T extends JComponent> extends JPanel {
 	protected JButton bUnfinishGame, bUnsetGame, bStartGame, bEndGame, bClearSearch;
 	protected Commandable commandable;
 	protected JCommandableProgress jte;
-	protected JComponent jWaiting, jRunning, jDone;
+	protected T jWaiting, jRunning, jDone;
 	protected JScrollPane sWaiting, sRunning, sDone;
 	protected JLabel lblSearch, lblPrepared, lblRunning, lblDone, lblGame;
 	protected List<Match> lWaiting, lRunning, lDone;
