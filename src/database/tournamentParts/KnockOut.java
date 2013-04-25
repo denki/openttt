@@ -21,6 +21,7 @@ public class KnockOut extends Commandable {
 
 	private Tree tree;
 	private boolean unsaved = false;
+	private boolean done = false;
 	private Map<Tree, Player> players;
 	private Map<Tree, Match> matches;
 
@@ -86,14 +87,15 @@ public class KnockOut extends Commandable {
 	}
 
 	private void visitNodes() {
-		visitNodes(tree);
+		done = visitNodes(tree);
 	}
 
-	private void visitNodes(Tree t) {
+	private boolean visitNodes(Tree t) {
 		if (!t.hasChildren())
-			return;
+			return true;
+		boolean done = true;
 		for (Tree t1 : t.getChildren())
-			visitNodes(t1);
+			done = done & visitNodes(t1);
 
 		Player pl = players.get(t.getChildren().get(0));
 		Player pr = players.get(t.getChildren().get(1));
@@ -101,20 +103,22 @@ public class KnockOut extends Commandable {
 		if (pl == null || pr == null) {
 			matches.remove(t);
 			players.remove(t);
-			return;
+			return false;
 		}
 
 		if (matches.get(t) == null || !matches.get(t).getLeft().equals(pl)
 				|| !matches.get(t).getRight().equals(pr)) {
 			players.remove(t);
 			matches.put(t, new Match(pl, pr));
-			return;
+			return false;
 		}
 
 		if (matches.get(t).getWinner() != null)
 			players.put(t, matches.get(t).getWinner());
 		else
 			players.remove(t);
+		
+		return done & (players.get(t) != null);
 	}
 
 	@Override
@@ -173,7 +177,7 @@ public class KnockOut extends Commandable {
 	}
 
 	public boolean isDone() {
-		return getRanking().get(0) != null;
+		return done;
 	}
 
 	public Tree getTree() {
