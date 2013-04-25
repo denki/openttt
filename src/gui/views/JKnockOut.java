@@ -1,6 +1,7 @@
 package gui.views;
 
 import gui.Main;
+import gui.components.DragScrollListener;
 import gui.components.JGameCommander;
 import gui.components.JListGameCommander;
 import gui.components.JTreeView;
@@ -31,7 +32,13 @@ public class JKnockOut extends View {
 		tv = new JTreeView(knockout);
 		jgc = new JListGameCommander(main, knockout);
 
-		JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(tv), jgc);
+		JScrollPane scroll = new JScrollPane(tv);
+		JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, scroll, jgc);
+		
+		DragScrollListener dsl = new DragScrollListener(tv, scroll);
+		tv.addMouseMotionListener(dsl);
+		tv.addMouseListener(dsl);
+		tv.addMouseWheelListener(dsl);
 
 		setLayout(new GridLayout(1,1));
 		add(split);

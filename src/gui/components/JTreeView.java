@@ -1,5 +1,6 @@
 package gui.components;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -8,18 +9,15 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.geom.AffineTransform;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.swing.DebugGraphics;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.text.StyleContext;
 
 import util.Tree;
-
 import database.match.Match;
 import database.players.Player;
 import database.tournamentParts.KnockOut;
@@ -42,6 +40,9 @@ public class JTreeView extends JPanel {
 	 */
 	private static final int seedX = 0, seedY = 10 + h;
 
+	private double zoomFactor = 1;
+	private int FONT_SIZE = 12;
+
 	private Tree tree;
 	private Map<Tree, Player> players;
 	private Map<Tree, Match> matches;
@@ -51,7 +52,7 @@ public class JTreeView extends JPanel {
 		tree = ko.getTree();
 		players = ko.getPlayersMap();
 		matches = ko.getMatchesMap();
-		
+
 		FontMetrics fm = StyleContext.getDefaultStyleContext().getFontMetrics(
 				UIManager.getDefaults().getFont("TextField.font"));
 		for (Entry<Tree, Player> p : players.entrySet())
@@ -60,13 +61,23 @@ public class JTreeView extends JPanel {
 		for (Entry<Tree, Match> m : matches.entrySet())
 			dx2 = Math.max(fm.stringWidth(m.getValue().edgePrintBottom()) + 8,
 					dx2);
-		setPreferredSize(new Dimension(tree.depth() * (l + dx1 + dx2) - dx2 + l + seedX,
-				tree.countLeaves() * (h + dy1) - dy1 + seedY));
+		setPreferredSize(new Dimension(tree.depth() * (l + dx1 + dx2) - dx2 + l
+				+ seedX, tree.countLeaves() * (h + dy1) - dy1 + seedY));
 	}
 
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+
+		Graphics2D g2 = (Graphics2D) g;
+		AffineTransform tr2 = new AffineTransform(g2.getTransform());
+		tr2.scale(zoomFactor, zoomFactor);
+		g2.setTransform(tr2);
+		g2.setStroke(new BasicStroke(1.2f));
+		g2.setFont(new Font("SansSerif", Font.PLAIN, FONT_SIZE));
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+
 		for (Entry<Tree, Player> p : players.entrySet())
 			l = Math.max(g.getFontMetrics()
 					.stringWidth(p.getValue().toString()) + 8, l);
@@ -76,12 +87,11 @@ public class JTreeView extends JPanel {
 					g.getFontMetrics().stringWidth(
 							m.getValue().edgePrintBottom()) + 8, dx2);
 		g.setColor(Color.BLACK);
-		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
 		Point pnt = new Point((l + dx1 + dx2) * (tree.depth() - 1) + l + seedX,
 				seedY);
 		drawTree(pnt, (Graphics2D) g, tree);
-		setPreferredSize(new Dimension(pnt.x + l + dx1, pnt.y - h));
+		setPreferredSize(new Dimension((int) (zoomFactor * (pnt.x + l + dx1)),
+				(int) (zoomFactor * (pnt.y - h))));
 	}
 
 	private int drawTree(Point p, Graphics2D g, Tree t) {
@@ -121,6 +131,24 @@ public class JTreeView extends JPanel {
 		g.drawLine(p.x, y - h, p.x + l, y - h); // top line
 
 		return y;
+	}
+	
+	public JTreeView zoomIn() {
+		zoomFactor *= Math.pow(2, 0.25);
+		repaint();
+		return this;
+	}
+
+	public JTreeView zoomOut() {
+		zoomFactor *= Math.pow(2, -0.25);
+		repaint();
+		return this;
+	}
+
+	public JTreeView zoomReset() {
+		zoomFactor = 1;
+		repaint();
+		return this;
 	}
 
 }
