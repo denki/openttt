@@ -23,8 +23,10 @@ public class JCommandableProgress extends JProgressBar {
 
 	@Override
 	public void repaint() {
-		if (commandable != null)
+		if (commandable != null) {
 			setValue(commandable.getFinishedGamesCount());
+			setMaximum(commandable.getTotalGamesCount());
+		}
 		super.repaint();
 	}
 
