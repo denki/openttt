@@ -2,6 +2,7 @@ package gui.watcher;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -11,7 +12,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.swing.AbstractAction;
 import javax.swing.DefaultCellEditor;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -27,6 +30,7 @@ import database.tournamentParts.Group;
 
 import gui.Language;
 import gui.Main;
+import gui.templates.IconButton;
 import gui.templates.Watcher;
 
 @SuppressWarnings("serial")
@@ -34,6 +38,7 @@ public class JPlayersPresence extends Watcher {
 
 	private JTable table;
 	private JTextField aFilter;
+	private JButton bFilter;
 	private JLabel lFilter;
 	private List<Player> players;
 
@@ -71,6 +76,14 @@ public class JPlayersPresence extends Watcher {
 			public void keyPressed(KeyEvent arg0) {
 			}
 		});
+		
+		bFilter = new IconButton(new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				aFilter.setText("");
+				refresh();
+			}
+		}, "clear_small");
 
 		table = new JTable(getTableCells(), new String[] {
 				Language.get("present"), Language.get("paid"),
@@ -142,6 +155,7 @@ public class JPlayersPresence extends Watcher {
 		p.setLayout(new BorderLayout());
 		p.add(lFilter, BorderLayout.WEST);
 		p.add(aFilter, BorderLayout.CENTER);
+		p.add(bFilter, BorderLayout.EAST);
 		add(p, BorderLayout.NORTH);
 		add(new JScrollPane(table), BorderLayout.CENTER);
 		pack();
