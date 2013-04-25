@@ -90,21 +90,31 @@ public class KnockOut extends Commandable {
 	}
 
 	private void visitNodes(Tree t) {
+		if (!t.hasChildren())
+			return;
 		for (Tree t1 : t.getChildren())
 			visitNodes(t1);
-		if (matches.containsKey(t))
-			if (matches.get(t).getState() == Match.STATE_FINISHED)
-				players.put(t, matches.get(t).getWinner());
-			else
-				players.remove(t);
-		else if (t.hasChildren() && players.containsKey(t.getChildren().get(0))
-				&& players.containsKey(t.getChildren().get(1)))
-			matches.put(t, new Match(players.get(t.getChildren().get(0)),
-					players.get(t.getChildren().get(1))));
-		else if (matches.containsKey(t)
-				&& (!players.containsKey(t.getChildren().get(0)) || players
-						.containsKey(t.getChildren().get(1))))
+
+		Player pl = players.get(t.getChildren().get(0));
+		Player pr = players.get(t.getChildren().get(1));
+
+		if (pl == null || pr == null) {
 			matches.remove(t);
+			players.remove(t);
+			return;
+		}
+
+		if (matches.get(t) == null || !matches.get(t).getLeft().equals(pl)
+				|| !matches.get(t).getRight().equals(pr)) {
+			players.remove(t);
+			matches.put(t, new Match(pl, pr));
+			return;
+		}
+
+		if (matches.get(t).getWinner() != null)
+			players.put(t, matches.get(t).getWinner());
+		else
+			players.remove(t);
 	}
 
 	@Override
