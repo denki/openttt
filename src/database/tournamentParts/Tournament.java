@@ -191,8 +191,9 @@ public class Tournament {
 			if (properties.DO_QUALIFYING & properties.DO_KNOCKOUT)
 				state = 21;
 			else {
-				while (qualifying.getGroups().size() > 1){
-					Group g = qualifying.getGroups().get(qualifying.getGroups().size() - 1);
+				while (qualifying.getGroups().size() > 1) {
+					Group g = qualifying.getGroups().get(
+							qualifying.getGroups().size() - 1);
 					List<Player> plrs = g.getPlayers();
 					for (Player p : plrs)
 						qualifying.getUnassigned().add(p);
