@@ -414,8 +414,6 @@ public class Match extends Edge<Player> implements Comparable<Match> {
 						.getPersons().get(matching[0] - 1)), p2 = new Single(
 						leftPlayer.getTournament(), rightPlayer.getPersons()
 								.get(matching[1] - 1));
-				Match m = new Match(p1, p2);
-				System.out.println(this.toString() + " -> " + m.toString());
 				submatches.add(new Match(p1, p2));
 			}
 		}

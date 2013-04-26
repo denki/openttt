@@ -43,7 +43,7 @@ public class JKnockOutWatcherWindow extends Watcher {
 		try {
 			ImageIO.write(img, "png", file);
 		} catch (IOException e) {
-			System.out.println("ERROR: Image not writable.");
+			System.err.println("Image " + file.getAbsolutePath() + " not writable.");
 		}
 
 		return "<h2>" + Language.get("knockOut")

@@ -39,8 +39,8 @@ import database.tournamentParts.Tournament;
 
 public class Main {
 
-	private String actualFile;
-	private View actView;
+	private String currentFile;
+	private View currentView;
 	private JFrame frame;
 	private StandartButtonPanel sbp;
 	private Tournament tournament = null;
@@ -123,28 +123,28 @@ public class Main {
 		try {
 			Preferences.loadFromFile();
 		} catch (ClassNotFoundException e1) {
-			System.out.println("ERROR: Expected class cant be found.");
+			System.err.println("Preferences: Expected class can't be found.");
 		} catch (InstantiationException e1) {
-			System.out.println("ERROR: Can't instanciate the class.");
+			System.err.println("Preferences: Can't instanciate the class.");
 		} catch (IllegalAccessException e1) {
-			System.out.println("ERROR: Access not permitted.");
+			System.err.println("Preferences: Access not permitted.");
 		} catch (UnsupportedLookAndFeelException e1) {
-			System.out.println("ERROR: Look and Feel not supported.");
+			System.err.println("Preferences: Look and Feel not supported.");
 		}
 		Main m = new Main();
 		if (args.length > 0) {
-			m.actualFile = args[0];
-			m.tournament = Tournament.loadTournament(m.actualFile);
+			m.currentFile = args[0];
+			m.tournament = Tournament.loadTournament(m.currentFile);
 			if (m.tournament != null)
 				m.setView(m.tournament.getState());
 			else {
 				m.setView(0);
 				try {
-					((JKnockOutPreBuilder) m.actView).open(m.actualFile);
+					((JKnockOutPreBuilder) m.currentView).open(m.currentFile);
 				} catch (Exception e) {
-					System.out.println("WARNING: Can't open " + m.actualFile
+					System.err.println("WARNING: Can't open " + m.currentFile
 							+ ".");
-					m.actualFile = null;
+					m.currentFile = null;
 					m.setView(0);
 				}
 			}
@@ -190,37 +190,37 @@ public class Main {
 
 	public void next() {
 		if (tournament.getState() == 4) {
-			((JKnockOutBuilder) actView).next();
+			((JKnockOutBuilder) currentView).next();
 		}
 		tournament.incState();
 		setView(tournament.getState());
 	}
 
 	public void openFile() {
-		if (actView.handleOpenClose()) {
-			actView.open();
+		if (currentView.handleOpenClose()) {
+			currentView.open();
 			return;
 		}
 		JFileChooser chooser = new JFileChooser();
 		int returnVal = chooser.showOpenDialog(frame);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			actualFile = chooser.getSelectedFile().getAbsolutePath();
-			String[] splitted = actualFile.split("\\.");
+			currentFile = chooser.getSelectedFile().getAbsolutePath();
+			String[] splitted = currentFile.split("\\.");
 			if (splitted[splitted.length - 1].equals("otk")) {
 				setView(-1);
 				try {
-					((JKnockOutPreBuilder) actView).open(actualFile);
+					((JKnockOutPreBuilder) currentView).open(currentFile);
 				} catch (NumberFormatException e) {
-					System.out.println("ERROR: Wrong format.");
+					System.err.println("JKnockOutPreBuilder: Wrong format.");
 				}
 			} else if (tournament == null) {
-				actualFile = chooser.getSelectedFile().getAbsoluteFile()
+				currentFile = chooser.getSelectedFile().getAbsoluteFile()
 						.getAbsolutePath();
-				tournament = Tournament.loadTournament(actualFile);
+				tournament = Tournament.loadTournament(currentFile);
 				setView(tournament.getState());
 			} else {
 				Main m = new Main();
-				m.actualFile = chooser.getSelectedFile().getAbsoluteFile()
+				m.currentFile = chooser.getSelectedFile().getAbsoluteFile()
 						.getAbsolutePath();
 				;
 				m.tournament = Tournament.loadTournament(chooser
@@ -229,29 +229,29 @@ public class Main {
 				m.setView(m.tournament.getState());
 			}
 		}
-		Preferences.addFile(actualFile);
+		Preferences.addFile(currentFile);
 	}
 
 	public void openFile(String fileName) {
-		actualFile = fileName;
-		if (actView.handleOpenClose()) {
-			actView.open();
+		currentFile = fileName;
+		if (currentView.handleOpenClose()) {
+			currentView.open();
 			return;
 		}
-		String[] splitted = actualFile.split("\\.");
+		String[] splitted = currentFile.split("\\.");
 		if (splitted[splitted.length - 1].equals("otk")) {
 			setView(-1);
 			try {
-				((JKnockOutPreBuilder) actView).open(actualFile);
+				((JKnockOutPreBuilder) currentView).open(currentFile);
 			} catch (NumberFormatException e) {
-				System.out.println("ERROR: Wrong format.");
+				System.err.println("JKnockOutPreBuilder: Wrong format.");
 			}
 		} else if (tournament == null) {
-			tournament = Tournament.loadTournament(actualFile);
+			tournament = Tournament.loadTournament(currentFile);
 			setView(tournament.getState());
 		} else {
 			Main m = new Main();
-			m.tournament = Tournament.loadTournament(actualFile);
+			m.tournament = Tournament.loadTournament(currentFile);
 			m.setView(m.tournament.getState());
 		}
 	}
@@ -272,7 +272,7 @@ public class Main {
 			JKnockOutWatcherWindow.print(tv);
 			break;
 		case 6:
-			((JSummary) actView).print();
+			((JSummary) currentView).print();
 			break;
 		}
 	}
@@ -305,8 +305,8 @@ public class Main {
 	}
 
 	public void refreshState() {
-		actView.refresh();
-		actView.repaint();
+		currentView.refresh();
+		currentView.repaint();
 		frame.repaint();
     	for (Watcher w : watchers) {
 			w.refresh();
@@ -316,8 +316,8 @@ public class Main {
 	
 	public void styleChanged() {
 		SwingUtilities.updateComponentTreeUI(frame);
-		actView.refresh();
-		actView.repaint();
+		currentView.refresh();
+		currentView.repaint();
 		for (Watcher w : watchers) {
     		SwingUtilities.updateComponentTreeUI(w);
     		w.refresh();
@@ -326,26 +326,26 @@ public class Main {
 	}
 	
 	public void saveFile() {
-		if (actView.handleOpenClose()) {
-			actView.save();
+		if (currentView.handleOpenClose()) {
+			currentView.save();
 			return;
 		}
-		if (actualFile == null)
+		if (currentFile == null)
 			saveFileAs();
 		else
-				actualFile = tournament.saveTournament(actualFile);
-		Preferences.addFile(actualFile);
+				currentFile = tournament.saveTournament(currentFile);
+		Preferences.addFile(currentFile);
 	}
 
 	public void saveFileAs() {
-		if (actView.handleOpenClose()) {
-			actView.saveTo();
+		if (currentView.handleOpenClose()) {
+			currentView.saveTo();
 			return;
 		}
 		JFileChooser chooser = new JFileChooser();
 		int returnVal = chooser.showSaveDialog(frame);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			actualFile = chooser.getSelectedFile().getAbsolutePath();
+			currentFile = chooser.getSelectedFile().getAbsolutePath();
 			saveFile();
 		}
 
@@ -367,37 +367,37 @@ public class Main {
 		// 5 KnockOut
 		// 6 Conclusion
 		frame.getContentPane().removeAll();
-		actView = null;
+		currentView = null;
 		switch (idx) {
 		case -1:
-			actView = new JKnockOutPreBuilder(this);
+			currentView = new JKnockOutPreBuilder(this);
 			break;
 		case 0:
-			actView = new JStart(this);
+			currentView = new JStart(this);
 			break;
 		case 1:
-			actView = new JProperties(this);
+			currentView = new JProperties(this);
 			break;
 		case 21:
-			actView = new JPlayers(this, true);
+			currentView = new JPlayers(this, true);
 			break;
 		case 22:
-			actView = new JPlayers(this, false);
+			currentView = new JPlayers(this, false);
 			break;
 		case 3:
-			actView = new JQualifying(this);
+			currentView = new JQualifying(this);
 			break;
 		case 4:
-			actView = new JKnockOutBuilder(this);
+			currentView = new JKnockOutBuilder(this);
 			break;
 		case 5:
-			actView = new JKnockOut(this);
+			currentView = new JKnockOut(this);
 			break;
 		case 6:
-			actView = new JSummary(this);
+			currentView = new JSummary(this);
 			break;
 		}
-		setView(actView);
+		setView(currentView);
 	}
 
 	private void setView(View v) {
@@ -406,14 +406,14 @@ public class Main {
 			sbp.setEnabled(v.getIconEnabledPattern());
 			frame.add(sbp, StandartButtonPanel.getPos());
 		}
-		actView.generateWindow();
+		currentView.generateWindow();
 		frame.add(v, BorderLayout.CENTER);
 		frame.validate();
 	}
 
 	public void refresh(int group) {
-		actView.refresh();
-		actView.repaint();
+		currentView.refresh();
+		currentView.repaint();
 		frame.repaint();
     	for (Watcher w : watchers) {
 			if (w instanceof JQualifyingWatcher & group != -1)

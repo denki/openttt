@@ -40,7 +40,7 @@ public class Language {
 				}
 			in.close();
 		} catch (IOException e) {
-			System.out.println("ERROR: Can't read language.dat");
+			System.err.println("Can not read language.dat");
 		}
 	}
 
@@ -53,7 +53,7 @@ public class Language {
 		createInstance();
 		String result = keys.get(prefix + key);
 		if (result == null)
-			System.out.println("Language can't find " + key);
+			System.err.println("Language can not find " + key);
 		return result;
 	}
 

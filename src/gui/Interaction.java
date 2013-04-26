@@ -18,9 +18,11 @@ public class Interaction {
 		if (!settingsFile.exists())
 			try {
 				if (!settingsFile.createNewFile())
-					System.out.println("ERROR: Could not create file.");
+					System.err.println("Settings: Could not create file "
+							+ settingsFile);
 			} catch (IOException e) {
-				System.out.println("ERROR: Cannot create config file.");
+				System.err.println("Settings: Could not create file "
+						+ settingsFile);
 			}
 		return settingsFile;
 	}
@@ -30,8 +32,7 @@ public class Interaction {
 		try {
 			return loadFile(conf.getAbsolutePath());
 		} catch (IOException e) {
-			System.out.println("ERROR: " + conf.getAbsolutePath()
-					+ " not readable.");
+			System.err.println(conf.getAbsolutePath() + " not readable.");
 		}
 		return null;
 	}
@@ -57,47 +58,45 @@ public class Interaction {
 				try {
 					Desktop.getDesktop().print(file);
 				} catch (IOException e) {
-					System.out
-							.println("WARNING: Printing not supported on this platform. Trying to open in Browser.");
+					System.err
+							.println("Printing not supported on this platform. Trying to open in Browser.");
 					try {
 						Desktop.getDesktop().browse(file.toURI());
 					} catch (IOException e2) {
-						System.out
-								.println("ERROR: Couldn't print or open file.");
+						System.err.println("Could not print or open file.");
 					}
 				}
 			else {
-				System.out
-						.println("WARNING: Printing not supported on this platform. Trying to open in Browser.");
+				System.err
+						.println("Printing not supported on this platform. Trying to open in Browser.");
 				try {
 					Desktop.getDesktop().browse(file.toURI());
 				} catch (IOException e2) {
-					System.out.println("ERROR: Couldn't print or open file.");
+					System.err.println("Could not print or open file.");
 				}
 			}
 		} catch (Exception e) {
-			System.out
-					.println("WARNING: Desktop API seems to be unsupported. Trying to open using CLI.");
+			System.err
+					.println("Desktop API seems to be unsupported. Trying to open using CLI.");
 			try {
 				Process p = Runtime.getRuntime().exec(
 						new String[] { "firefox", file.toString() });
 				try {
 					p.waitFor();
 				} catch (InterruptedException e1) {
-					System.out.println("Process interrupted");
+					System.err.println("Process interrupted");
 				}
 				int success = p.exitValue();
 				switch (success) {
 				case 0:
-					System.out.println("Opening in CLI was successful.");
+					System.err.println("Opening in CLI was successful.");
 					break;
 				default:
-					System.out
-							.println("ERROR: Unable to print or open. Install firefox please.");
+					System.err
+							.println("Unable to print or open. Install firefox please.");
 				}
 			} catch (IOException e1) {
-				System.out
-						.println("ERROR: File not found. Install firefox please.");
+				System.err.println("File not found. Install firefox please.");
 			}
 		}
 	}
@@ -134,7 +133,8 @@ public class Interaction {
 			out.write(text);
 			out.close();
 		} catch (FileNotFoundException e) {
-			System.out.println("ERROR: File not found.");
+			System.err
+					.println("File " + file.getAbsolutePath() + " not found.");
 		}
 
 	}

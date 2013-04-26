@@ -40,9 +40,8 @@ public class Tournament {
 			Tournament tournament = (Tournament) xstream.fromXML(xml);
 			return tournament;
 		} catch (IOException e) {
-			System.out
-					.println("WARNING: "
-							+ fileName
+			System.err
+					.println(fileName
 							+ " is not of expected XML format. Trying the old binary one.");
 			ObjectInputStream objIn;
 			try {
@@ -53,13 +52,13 @@ public class Tournament {
 				objIn.close();
 				return tournament;
 			} catch (FileNotFoundException e1) {
-				System.out.println("ERROR: File " + fileName
+				System.err.println("File " + fileName
 						+ " does not exist.");
 			} catch (IOException e1) {
-				System.out.println("ERROR: File " + fileName
+				System.err.println("File " + fileName
 						+ " is not a OpenTTT file.");
 			} catch (ClassNotFoundException e2) {
-				System.out.println("ERROR: File " + fileName
+				System.err.println("File " + fileName
 						+ " is not a OpenTTT file.");
 			}
 		}
@@ -160,14 +159,9 @@ public class Tournament {
 
 	public List<Player> getRanking() {
 		List<Player> result = new ArrayList<Player>();
-		if (properties.DO_KNOCKOUT) {
-//			for (int i = knockOut.getTree().size() - 1; i >= 0; i--)
-//				for (Player p : knockOut.getTree().get(i))
-//					if (!result.contains(p))
-//						if (p != null)
-//							result.add(p);
+		if (properties.DO_KNOCKOUT)
 			return knockOut.getRanking();
-		} else {
+		else {
 			result.addAll(qualifying.getGroups().get(0).getPlayers());
 			Collections.sort(result);
 		}
@@ -274,10 +268,10 @@ public class Tournament {
 						p1 = new Double(p);
 						help.add(p1);
 					} catch (InputFormatException e) {
-						System.out
-								.println("ERROR: Can not convert to database.Double");
+						System.err
+								.println("Can not convert to database.Double");
 					} catch (StringIndexOutOfBoundsException e) {
-						System.out.println("WARNING: Not enough data, " + p
+						System.err.println("Not enough data, " + p
 								+ " skipped.");
 					}
 				}
@@ -291,10 +285,10 @@ public class Tournament {
 					p1 = new Double(p);
 					help.add(p1);
 				} catch (InputFormatException e) {
-					System.out
-							.println("ERROR: Can not convert to database.Double");
+					System.err
+							.println("Can not convert to database.Double");
 				} catch (StringIndexOutOfBoundsException e) {
-					System.out.println("WARNING: Not enough data, " + p
+					System.err.println("Not enough data, " + p
 							+ " skipped.");
 				}
 			}
@@ -309,13 +303,10 @@ public class Tournament {
 		if (knockOut != null) {
 			List<Match> matches = knockOut.getMatches();
 			knockOut = k;
-			for (Match m : matches) {
-				System.out.println(m);
+			for (Match m : matches)
 				k.addMatch(m);
-			}
-		} else {
+		} else
 			knockOut = k;
-		}
 	}
 
 	public void setName(String name) {

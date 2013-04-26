@@ -26,11 +26,12 @@ public abstract class Player extends Node implements Comparable<Player> {
 	}
 
 	public static Player getNobody() {
+		// TODO That solution is really bad -> class Nobody
 		try {
 			return new Single(null, new String[] { "nobody", "nobody" });
 		} catch (InputFormatException e) {
-			System.out
-					.println("ERROR: Unexpected behaviour in database.Player.getNobody()");
+			System.err
+					.println("Unexpected behaviour in database.Player.getNobody()");
 		}
 		return null;
 	}

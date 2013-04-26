@@ -253,7 +253,7 @@ public class Preferences extends JFrame implements ItemListener {
 				try {
 					UIManager.setLookAndFeel(info.getClassName());
 				} catch (Exception e) {
-					System.out.println("Error setting Look&Feel");
+					System.err.println("Error setting Look&Feel");
 				}
 		Language.setLanguage(cbg1.getSelectedCheckbox().getLabel()
 				.substring(0, 2));

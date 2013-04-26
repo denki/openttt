@@ -39,7 +39,7 @@ public class Calculator {
 	public static List<Match> calculateGames(Group g) {
 		List<Player> players = g.getPlayers();
 		if (players.size() < 2) {
-			System.out.println("ERROR: Not enough players for games: "
+			System.err.println("Not enough players for games: "
 					+ g.toString());
 			return new ArrayList<Match>();
 		}

@@ -93,11 +93,11 @@ public class ImportPlayers extends Watcher {
 					accept();
 					dispose();
 				} catch (InputFormatException e1) {
-					System.out
-							.println("ERROR: Player names have the wrong format.");
+					System.err
+							.println("Player names have the wrong format.");
 				} catch (InconsistentStateException e1) {
-					System.out
-							.println("ERROR: Tournament state is inconsistent.");
+					System.err
+							.println("Tournament state is inconsistent.");
 				}
 			}
 		};
@@ -206,7 +206,7 @@ public class ImportPlayers extends Watcher {
 				lineNum++;
 			}
 		} catch (IOException e) {
-			System.out.println("ERROR: File not accessible: " + fileName);
+			System.err.println("File not accessible: " + fileName);
 		}
 		data = result.toArray(new String[][] {});
 		columnNames = new String[maxColums];
@@ -265,9 +265,9 @@ public class ImportPlayers extends Watcher {
 				columnNames[i] = Language.get("column") + " " + i;
 			}
 		} catch (FileNotFoundException e) {
-			System.out.println("ERROR: File not found.");
+			System.err.println("File not found " + fileName);
 		} catch (IOException e) {
-			System.out.println("ERROR: I/O Exception.");
+			System.err.println("I/O Exception " + fileName);
 		}
 	}
 
@@ -320,9 +320,9 @@ public class ImportPlayers extends Watcher {
 				columnNames[i] = Language.get("column") + " " + i;
 			}
 		} catch (FileNotFoundException e) {
-			System.out.println("ERROR: File not found.");
+			System.err.println("File not found " + fileName);
 		} catch (IOException e) {
-			System.out.println("ERROR: I/O Exception.");
+			System.err.println("I/O Exception " + fileName);
 		}
 	}
 
@@ -360,11 +360,11 @@ public class ImportPlayers extends Watcher {
 				columnNames[i] = Language.get("column") + " " + i;
 			}
 		} catch (FileNotFoundException e) {
-			System.out.println("ERROR: File not found.");
+			System.err.println("File not found " + fileName);
 		} catch (InconsistentStateException e) {
-			System.out.println("ERROR: No data found.");
+			System.err.println("No data found " + fileName);
 		} catch (Exception e) {
-			System.out.println("ERROR: Unknown Error reading file.");
+			System.err.println("Unknown Error reading file " + fileName);
 		}
 	}
 
@@ -467,8 +467,8 @@ public class ImportPlayers extends Watcher {
 				try {
 					throw new InconsistentStateException();
 				} catch (InconsistentStateException e) {
-					System.out
-							.println("ERROR: Tournament has inconsistent state.");
+					System.err
+							.println("Tournament has inconsistent state.");
 				}
 			}
 			List<String> comboBoxEntries = new ArrayList<String>();

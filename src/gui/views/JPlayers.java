@@ -562,7 +562,7 @@ public class JPlayers extends View implements KeyListener {
 		try {
 			main.addWatcher(new ImportPlayers(main, file));
 		} catch (InconsistentStateException e) {
-			System.out.println("ERROR: Tournament state is inconsistent.");
+			System.err.println("Tournament state is inconsistent.");
 		}
 	}
 

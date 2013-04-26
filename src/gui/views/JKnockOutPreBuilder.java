@@ -138,24 +138,8 @@ public class JKnockOutPreBuilder extends View implements ActionListener {
 	public void open() {
 		JFileChooser chooser = new JFileChooser();
 		int returnVal = chooser.showOpenDialog(main.getFrame());
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			actualFile = chooser.getSelectedFile().getAbsoluteFile()
-					.getAbsolutePath();
-		}
-		try {
-			preKnockOut.open(actualFile);
-			jGroupNum.setValue(preKnockOut.getGroup());
-			jPlaceFrom.setValue(preKnockOut.getStart());
-			jPlaceTo.setValue(preKnockOut.getEnd());
-			refresh();
-			for (int i = 0; i < preKnockOut.getPlaces().length; i++) {
-				pComboBoxes.get(i).setSelectedIndex(preKnockOut.getPlaces()[i]);
-			}
-		} catch (NumberFormatException e) {
-			System.out.println("ERROR: File " + actualFile + " is corrupted.");
-		} catch (IOException e) {
-			System.out.println("ERROR: Can not access " + actualFile);
-		}
+		if (returnVal == JFileChooser.APPROVE_OPTION)
+			open(chooser.getSelectedFile().getAbsoluteFile().getAbsolutePath());
 	}
 
 	public void open(String fileName) {
@@ -171,9 +155,9 @@ public class JKnockOutPreBuilder extends View implements ActionListener {
 				pComboBoxes.get(i).setSelectedIndex(places[i]);
 			}
 		} catch (NumberFormatException e) {
-			System.out.println("ERROR: File " + fileName + " is corrupted.");
+			System.err.println("File " + fileName + " is corrupted.");
 		} catch (IOException e) {
-			System.out.println("ERROR: Can not access " + fileName);
+			System.err.println("Can not access " + fileName);
 		}
 	}
 
@@ -208,9 +192,10 @@ public class JKnockOutPreBuilder extends View implements ActionListener {
 				| group != preKnockOut.getGroup()) {
 			preKnockOut = new PreKnockOut(placeFrom, placeTo, group);
 		}
-		
+
 		for (int i = 0; i < Calculator.nextPowerOfTwo(plrs.size() - 1); i++) {
-			final JComboBox<String> jCB = new JComboBox<String>(plrs.toArray(new String[0]));
+			final JComboBox<String> jCB = new JComboBox<String>(
+					plrs.toArray(new String[0]));
 			jCB.setAction(new ChangeAction(i));
 			pComboBoxes.add(jCB);
 			JPanel jPan = new JPanel();
@@ -222,23 +207,25 @@ public class JKnockOutPreBuilder extends View implements ActionListener {
 		if (getParent() != null)
 			getParent().repaint();
 	}
-	
+
 	@Override
 	public void repaint() {
 		if (pComboBoxes != null) {
 			int placeFrom = ((Integer) jPlaceFrom.getValue()).intValue();
 			int placeTo = ((Integer) jPlaceTo.getValue()).intValue();
 			int group = ((Integer) jGroupNum.getValue()).intValue();
-	
+
 			List<String> plrs = new ArrayList<String>();
 			plrs.add("<" + Language.get("nobody") + ">");
 			for (int j = 0; j < group; j++)
 				for (int i = placeFrom - 1; i < placeTo; i++)
-					plrs.add((i + 1) + ". " + Language.get("group") + " " + (j + 1));
-			
+					plrs.add((i + 1) + ". " + Language.get("group") + " "
+							+ (j + 1));
+
 			for (JComboBox<String> jcb : pComboBoxes) {
 				int idx = jcb.getSelectedIndex();
-				jcb.setModel(new DefaultComboBoxModel<String>(plrs.toArray(new String[0])));
+				jcb.setModel(new DefaultComboBoxModel<String>(plrs
+						.toArray(new String[0])));
 				jcb.setSelectedIndex(idx);
 			}
 		}
@@ -251,9 +238,9 @@ public class JKnockOutPreBuilder extends View implements ActionListener {
 			try {
 				preKnockOut.save(actualFile);
 			} catch (FileNotFoundException e) {
-				System.out.println("File not found.");
+				System.err.println("File "  + actualFile + " not found.");
 			} catch (IOException e) {
-				System.out.println("File not accessible.");
+				System.err.println("File "  + actualFile + " not accessible.");
 			}
 		else
 			saveTo();
