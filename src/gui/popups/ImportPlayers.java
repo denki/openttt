@@ -327,42 +327,22 @@ public class ImportPlayers extends Watcher {
 	}
 
 	public void readFromOds() {
-		List<String[]> odsData = new ArrayList<String[]>();
 		OdfSpreadsheetDocument ods;
-		List<String> cells = new ArrayList<String>();
 		try {
 			ods = OdfSpreadsheetDocument.loadDocument(new File(fileName));
 			OdfTable table = ods.getTableList().get(0);
-			int maxColumns = 0;
-			for (int rIdx = 0; rIdx < table.getRowCount(); rIdx++) {
-				cells.clear();
-				cells.add("" + (rIdx + 1));
-				boolean found = false;
-				for (int cIdx = 0; cIdx < table.getColumnCount(); cIdx++) {
-					String text = table.getCellByPosition(cIdx, rIdx)
-							.getDisplayText();
-					if (!text.equals(""))
-						found = true;
-					cells.add(text);
-				}
-				if (!found & rIdx > 10)
-					break;
-				maxColumns = Math.max(maxColumns, table.getColumnCount() + 1);
-				if (found)
-					odsData.add(cells.toArray(new String[0]));
+			data = new String[table.getRowCount()][table.getColumnCount() + 1];
+			for (int r = 0; r < table.getRowCount(); r++) {
+				data[r][0] = Integer.toString(r + 1);
+				for (int c = 0; c < table.getColumnCount(); c++)
+					data[r][c + 1] = table.getCellByPosition(c, r).getDisplayText();
 			}
-			if (odsData.size() == 0)
-				throw new InconsistentStateException();
-			data = odsData.toArray(new String[][] {});
-			columnNames = new String[maxColumns];
+			columnNames = new String[table.getColumnCount() + 1];
 			columnNames[0] = "#";
-			for (int i = 1; i < maxColumns; i++) {
+			for (int i = 1; i < table.getColumnCount() + 1; i++)
 				columnNames[i] = Language.get("column") + " " + i;
-			}
 		} catch (FileNotFoundException e) {
 			System.err.println("File not found " + fileName);
-		} catch (InconsistentStateException e) {
-			System.err.println("No data found " + fileName);
 		} catch (Exception e) {
 			System.err.println("Unknown Error reading file " + fileName);
 		}
