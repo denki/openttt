@@ -30,7 +30,7 @@ public class JKnockOutWatcherWindow extends Watcher {
 		jTreeView.repaint();
 		BufferedImage img = new BufferedImage(jTreeView.getPreferredSize().width,
 				jTreeView.getPreferredSize().height, BufferedImage.TYPE_INT_ARGB);
-		jTreeView.print(img.getGraphics());
+		jTreeView.paintComponent(img.getGraphics());
 
 		File file;
 		if (System.getProperty("java.io.tmpdir").charAt(0) == '/')
