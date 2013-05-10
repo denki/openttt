@@ -439,6 +439,8 @@ public class Match extends Edge<Player> implements Comparable<Match> {
 		for (Game g : games) {
 			m.addSentence(new Game(g.getRightBalls(), g.getLeftBalls()));
 		}
+		m.endedDate = endedDate;
+		m.startedDate = startedDate;
 		return m;
 	}
 }
