@@ -433,4 +433,12 @@ public class Match extends Edge<Player> implements Comparable<Match> {
 	public void setGroup(int group2) {
 		group = group2;
 	}
+
+	public Match flip() {
+		Match m = new Match(rightPlayer, leftPlayer);
+		for (Game g : games) {
+			m.addSentence(new Game(g.getRightBalls(), g.getLeftBalls()));
+		}
+		return m;
+	}
 }

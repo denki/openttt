@@ -3,11 +3,13 @@ package database.tournamentParts;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
+import java.util.Set;
 
 import util.Binary;
 import util.Nullary;
@@ -24,6 +26,7 @@ public class KnockOut extends Commandable {
 	private boolean done = false;
 	private Map<Tree, Player> players;
 	private Map<Tree, Match> matches;
+	private Map<Set<Player>, Match> blackBox;
 
 	public KnockOut() {
 		tree = null;
@@ -34,7 +37,12 @@ public class KnockOut extends Commandable {
 	public void setPlayers(List<Player> pls) {
 		Queue<Tree> st = new LinkedList<Tree>();
 		players.clear();
-		// TODO rescue matches!
+		for (Match m : getMatches()){
+			Set<Player> plrs = new HashSet<Player>();
+			plrs.add(m.getLeft());
+			plrs.add(m.getRight());
+			getBlackBox().put(plrs, m);
+		}
 		matches.clear();
 		for (Player p : pls) {
 			if (p.isNobody() || p == null)
@@ -95,25 +103,48 @@ public class KnockOut extends Commandable {
 		Player pl = players.get(t.getChildren().get(0));
 		Player pr = players.get(t.getChildren().get(1));
 
+		// children do not exist
 		if (pl == null || pr == null) {
 			matches.remove(t);
 			players.remove(t);
 			return false;
 		}
 
+		// match is empty or players do not match
 		if (matches.get(t) == null || !matches.get(t).getLeft().equals(pl)
 				|| !matches.get(t).getRight().equals(pr)) {
 			players.remove(t);
-			matches.put(t, new Match(pl, pr));
-			return false;
+			matches.put(t, newMatch(pl, pr));
 		}
 
+		// there exists a winner
 		if (matches.get(t).getWinner() != null)
 			players.put(t, matches.get(t).getWinner());
 		else
 			players.remove(t);
 		
 		return done & (players.get(t) != null);
+	}
+
+	private Match newMatch(Player pl, Player pr) {
+		Match m = new Match(pl, pr);
+		Set<Player> plrs = new HashSet<Player>();
+		plrs.add(pl);
+		plrs.add(pr);
+		if (getBlackBox().containsKey(plrs)){
+			Match m2 = getBlackBox().get(plrs);
+			if (m2.getLeft().equals(pl))
+				m = m2;
+			else
+				m = m2.flip();
+		}
+		return m;
+	}
+
+	private Map<Set<Player>, Match> getBlackBox() {
+		if (blackBox == null)
+			blackBox = new HashMap<Set<Player>, Match>();
+		return blackBox;
 	}
 
 	@Override
