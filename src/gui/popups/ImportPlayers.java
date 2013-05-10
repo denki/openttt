@@ -331,15 +331,19 @@ public class ImportPlayers extends Watcher {
 		try {
 			ods = OdfSpreadsheetDocument.loadDocument(new File(fileName));
 			OdfTable table = ods.getTableList().get(0);
-			data = new String[table.getRowCount()][table.getColumnCount() + 1];
-			for (int r = 0; r < table.getRowCount(); r++) {
+			System.out.println(table.getRowCount());
+			System.out.println(table.getColumnCount());
+			int rowCount = Math.min(table.getRowCount(), 1024);
+			int columnCount = Math.min(table.getColumnCount(), 1023);
+			data = new String[rowCount][columnCount + 1];
+			for (int r = 0; r < rowCount; r++) {
 				data[r][0] = Integer.toString(r + 1);
-				for (int c = 0; c < table.getColumnCount(); c++)
+				for (int c = 0; c < columnCount; c++)
 					data[r][c + 1] = table.getCellByPosition(c, r).getDisplayText();
 			}
-			columnNames = new String[table.getColumnCount() + 1];
+			columnNames = new String[columnCount + 1];
 			columnNames[0] = "#";
-			for (int i = 1; i < table.getColumnCount() + 1; i++)
+			for (int i = 1; i < columnCount + 1; i++)
 				columnNames[i] = Language.get("column") + " " + i;
 		} catch (FileNotFoundException e) {
 			System.err.println("File not found " + fileName);
