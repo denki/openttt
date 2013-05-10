@@ -3,6 +3,7 @@ package gui.watcher;
 import gui.Interaction;
 import gui.Language;
 import gui.Main;
+import gui.components.DragScrollListener;
 import gui.components.JTreeView;
 import gui.templates.Watcher;
 
@@ -11,19 +12,17 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 
 @SuppressWarnings("serial")
 public class JKnockOutWatcherWindow extends Watcher {
 	private Main main;
-	private JComponent treeView;
+	private JTreeView treeView;
 
 	public JKnockOutWatcherWindow(Main m) {
 		super(Language.get("knockOutWatcher"), m);
 		main = m;
 		treeView = new JTreeView(main.getTournament().getKnockOut());
-
 	}
 
 	public static String getHtml(JTreeView jTreeView) {
@@ -60,14 +59,20 @@ public class JKnockOutWatcherWindow extends Watcher {
 
 	@Override
 	public void generateWindow() {
-		add(new JScrollPane(treeView));
+		JScrollPane scroll = new JScrollPane(treeView);
+		
+		DragScrollListener dsl = new DragScrollListener(treeView, scroll);
+		treeView.addMouseMotionListener(dsl);
+		treeView.addMouseListener(dsl);
+		treeView.addMouseWheelListener(dsl);
+		
+		add(scroll);
 		pack();
 		setVisible(true);
 	}
 
 	@Override
 	public void refresh() {
-		treeView.repaint();
 		repaint();
 	}
 }
