@@ -1,5 +1,6 @@
 package database.players;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import gui.Language;
  * @author Tobias Denkinger
  *
  */
-public class Double extends Player {
+public class Double extends Player implements Serializable{
 
 	private Person pLeft, pRight;
 

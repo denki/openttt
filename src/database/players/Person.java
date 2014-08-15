@@ -1,5 +1,7 @@
 package database.players;
 
+import java.io.Serializable;
+
 import gui.Language;
 
 /**
@@ -7,7 +9,7 @@ import gui.Language;
  * @author Tobias Denkinger
  *
  */
-public class Person {
+public class Person implements Serializable {
 
 	private boolean present = false, free = true;
 	private String surname, prename, club;

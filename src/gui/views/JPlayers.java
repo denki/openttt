@@ -3,6 +3,7 @@ package gui.views;
 import gui.Language;
 import gui.Main;
 import gui.components.JPlayerCheckBox;
+import gui.components.ListTransferHandler;
 import gui.popups.ImportPlayers;
 import gui.popups.JPlayerDetails;
 import gui.templates.IconButton;
@@ -25,6 +26,8 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
+import javax.swing.DropMode;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -33,6 +36,8 @@ import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
+import javax.swing.ListModel;
+import javax.swing.TransferHandler;
 import javax.swing.filechooser.FileFilter;
 
 import database.players.Double;
@@ -51,6 +56,8 @@ public class JPlayers extends View implements KeyListener {
 	private Tournament tournament;
 	private List<Group> groups;
 	private List<Player> unassignedPlayers;
+	
+	private DefaultListModel<Player> mUnassignedPlayers, mGroupedPlayers;
 
 	private JLabel lPlayer, lSearch;
 	
@@ -100,8 +107,12 @@ public class JPlayers extends View implements KeyListener {
 				for (Object o : jUnassignedPlayers.getSelectedValuesList()) {
 					Player player = (Player) o;
 					tournament.getQualifying().assignPlayer(player, group);
+					mUnassignedPlayers.removeElement(o);
+					mGroupedPlayers.addElement(player);
 				}
-				main.refreshState();
+				jUnassignedPlayers.setModel(mUnassignedPlayers);
+				jGroupedPlayers.setModel(mGroupedPlayers);
+//				main.refreshState();
 			}
 		}
 	};
@@ -111,6 +122,7 @@ public class JPlayers extends View implements KeyListener {
 		public void actionPerformed(ActionEvent arg0) {
 			jFilter.setText("");
 			refreshLists();
+			// TODO list models
 		}
 	};
 
@@ -249,8 +261,10 @@ public class JPlayers extends View implements KeyListener {
 			}
 			if (player != null) {
 				unassignedPlayers.add(player);
+				mUnassignedPlayers.addElement(player);
 				jPlayerName.setText("");
-				main.refreshState();
+				jUnassignedPlayers.setModel(mUnassignedPlayers);
+//				main.refreshState();
 			} else {
 				jPlayerName.setBackground(Color.RED);
 			}
@@ -261,9 +275,12 @@ public class JPlayers extends View implements KeyListener {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			if (!jUnassignedPlayers.getSelectedValuesList().isEmpty()) {
-				for (Object o : jUnassignedPlayers.getSelectedValuesList())
+				for (Object o : jUnassignedPlayers.getSelectedValuesList()){
 					unassignedPlayers.remove(o);
-				main.refreshState();
+					mUnassignedPlayers.removeElement(o);
+				}
+				jUnassignedPlayers.setModel(mUnassignedPlayers);
+//				main.refreshState();
 			}
 		}
 	};
@@ -279,7 +296,8 @@ public class JPlayers extends View implements KeyListener {
 	@Override
 	public void generateWindow() {
 		// non-button elements
-		jUnassignedPlayers = new JList<Player>();
+		mUnassignedPlayers = new DefaultListModel<Player>();		
+		jUnassignedPlayers = new JList<Player>(mUnassignedPlayers);
 		jUnassignedPlayers.addMouseListener(new DefaultMouseListener(){
 			@Override
 			public void mouseClicked(MouseEvent arg0){
@@ -321,8 +339,11 @@ public class JPlayers extends View implements KeyListener {
 			}
 		});
 		jUnassignedPlayers.setCellRenderer(rnd);
+		jUnassignedPlayers.setDragEnabled(true);
+		jUnassignedPlayers.setTransferHandler(new ListTransferHandler(jUnassignedPlayers, mUnassignedPlayers));
 
-		jGroupedPlayers = new JList<Player>();
+		mGroupedPlayers = new DefaultListModel<Player>();
+		jGroupedPlayers = new JList<Player>(mGroupedPlayers);
 		jGroupedPlayers.addMouseListener(new DefaultMouseListener() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -365,6 +386,9 @@ public class JPlayers extends View implements KeyListener {
 			}
 		});
 		jGroupedPlayers.setCellRenderer(rnd);
+		jGroupedPlayers.setDragEnabled(true);
+		jGroupedPlayers.setDropMode(DropMode.INSERT);
+		jGroupedPlayers.setTransferHandler(new ListTransferHandler(jGroupedPlayers, mGroupedPlayers));
 
 		jPlayerName = new JTextField() {
 			@Override
@@ -372,6 +396,7 @@ public class JPlayers extends View implements KeyListener {
 				return new Dimension(0, 0);
 			}
 		};
+		jPlayerName.setDragEnabled(true);
 		jPlayerName.addKeyListener(this);
 		jFilter = new JTextField() {
 			@Override
@@ -617,6 +642,8 @@ public class JPlayers extends View implements KeyListener {
 			jGroups.setModel(model);
 		}
 		List<Player> lst = new ArrayList<Player>();
+		mUnassignedPlayers.clear();
+		mGroupedPlayers.clear();
 		String text = jFilter.getText();
 		text = text.toLowerCase();
 		if (text.equals(""))
@@ -630,12 +657,13 @@ public class JPlayers extends View implements KeyListener {
 				if (contains)
 					lst.add(p);
 			}
-		jUnassignedPlayers.setListData(lst.toArray(new Player[0]));
+		for (Player p: lst)
+			mUnassignedPlayers.addElement(p);
 		if (jGroups.getSelectedItem() != null)
-			jGroupedPlayers.setListData(((Group) jGroups.getSelectedItem())
-					.getPlayers().toArray(new Player[0]));
-		else
-			jGroupedPlayers.setListData(new Player[0]);
+			for (Player p: ((Group) jGroups.getSelectedItem()).getPlayers())
+				mGroupedPlayers.addElement(p);
+		jUnassignedPlayers.setModel(mUnassignedPlayers);
+		jGroupedPlayers.setModel(mGroupedPlayers);
 	}
 
 	@Override

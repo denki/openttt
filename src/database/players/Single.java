@@ -1,5 +1,6 @@
 package database.players;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +8,7 @@ import database.tournamentParts.Tournament;
 import exceptions.InputFormatException;
 import gui.Language;
 
-public class Single extends Player {
+public class Single extends Player implements Serializable{
 
 	private Person person;
 
