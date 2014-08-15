@@ -26,39 +26,22 @@ public class ListTransferHandler extends TransferHandler {
     	this.list = lp;
     	this.model = lm;
 	}
-    
-    /**
-     * We only support importing strings.
-     */
+
     @Override
 	public boolean canImport(TransferHandler.TransferSupport info) {
-        // Check for String flavor
-        if (!info.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-            return false;
-        }
         return true;
    }
 
-    /**
-     * Bundle up the selected items in a single list for export.
-     * Each line is separated by a newline.
-     */
     @Override
 	protected Transferable createTransferable(JComponent c) {
         return new PlayerTransferable(list.getSelectedValuesList());
     }
     
-    /**
-     * We support both copy and move actions.
-     */
     @Override
 	public int getSourceActions(JComponent c) {
         return TransferHandler.COPY_OR_MOVE;
     }
     
-    /**
-     * Perform the actual import.  This demo only supports drag and drop.
-     */
     @Override
 	public boolean importData(TransferHandler.TransferSupport info) {
         if (!info.isDrop())
@@ -78,9 +61,6 @@ public class ListTransferHandler extends TransferHandler {
         return true;
     }
 
-    /**
-     * Remove the items moved from the list.
-     */
     @Override
 	protected void exportDone(JComponent c, Transferable t, int action) {
     	List<Player> data;
