@@ -44,9 +44,9 @@ public class Qualifying extends Commandable {
 			group.delPlayer(player);
 	}
 	
-	public void addToGroup(Player player, Group group) {
+	public void addToGroup(int idx, Player player, Group group) {
 		if (group == null)
-			unassigned.add(player);
+			unassigned.add(idx, player);
 		else
 			group.addPlayer(player);
 	}

@@ -208,17 +208,16 @@ public class JPlayers extends View implements KeyListener {
 				JList<? extends Player> list, Player plr, int index,
 				boolean isSelected, boolean cellHasFocus) {
 			final JLabel cb = new JLabel();
+			final Color selBG = javax.swing.UIManager.getDefaults().getColor("List.selectionBackground");
+			final Color selFG = javax.swing.UIManager.getDefaults().getColor("List.selectionForeground");
 			cb.setText("<html>" + plr.getFullName() + "<br/> " + plr.getClub()
 					+ "</html>");
-			cb.setOpaque(true);
-			cb.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, true));
-//			if (isSelected) {
-//				cb.setForeground(getBackground());
-//				cb.setBackground(getForeground());
-//			}
-			// else {
-			// cb.setBackground(Color.white);
-			// }
+			cb.setBorder(BorderFactory.createLineBorder(getForeground(), 1, true));
+			if (isSelected) {
+				cb.setOpaque(true);
+				cb.setForeground(selFG);
+				cb.setBackground(selBG);
+			}
 			return cb;
 		}
 	};
@@ -341,6 +340,7 @@ public class JPlayers extends View implements KeyListener {
 		});
 		jUnassignedPlayers.setCellRenderer(rnd);
 		jUnassignedPlayers.setDragEnabled(true);
+		jUnassignedPlayers.setDropMode(DropMode.INSERT);
 		jUnassignedPlayers.setTransferHandler(new ListTransferHandler(
 				jUnassignedPlayers, mUnassignedPlayers, tournament, null));
 

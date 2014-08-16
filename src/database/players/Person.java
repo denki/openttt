@@ -73,8 +73,8 @@ public class Person implements Serializable {
 		result += surname;
 		if (!prename.equals(""))
 			result += ", " + prename;
-		if (!club.equals(""))
-			result += " (" + club + ")";
+//		if (!club.equals(""))
+//			result += " (" + club + ")";
 		return result;
 	}
 

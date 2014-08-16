@@ -60,9 +60,11 @@ public class ListTransferHandler extends TransferHandler {
         List<Integer> data;
 		try {
 			data = (List<Integer>) info.getTransferable().getTransferData(DataFlavor.stringFlavor);
-            for (Integer id : data) {
-            	model.addElement(tournament.getPlayer(id));
-            	tournament.getQualifying().addToGroup(tournament.getPlayer(id), group);
+            int idx = ((JList.DropLocation) info.getDropLocation()).getIndex();
+			for (Integer id : data) {
+            	model.add(idx, tournament.getPlayer(id));
+            	tournament.getQualifying().addToGroup(idx, tournament.getPlayer(id), group);
+            	idx++;
             }
 		} catch (UnsupportedFlavorException | IOException e) {
 			// TODO Auto-generated catch block
