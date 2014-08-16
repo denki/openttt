@@ -27,8 +27,9 @@ public class ListTransferHandler extends TransferHandler {
     private Group group;
     private int[] indices;
     private int index;
-    private boolean importDone;
+    private boolean sameComponent;
     private boolean exporting;
+    private JComponent comp;
     private DefaultListModel<Player> model;     
     
     public ListTransferHandler(JList<Player> lp, DefaultListModel<Player> lm, Tournament t, Group g) {
@@ -38,7 +39,7 @@ public class ListTransferHandler extends TransferHandler {
     	tournament = t;
     	group = g;
     	indices = null;
-    	importDone = false;
+    	sameComponent = false;
     	exporting = false;
 	}
 
@@ -50,6 +51,7 @@ public class ListTransferHandler extends TransferHandler {
     @Override
 	protected Transferable createTransferable(JComponent c) {
     	exporting = true;
+    	comp = c;
         List<Integer> result = new ArrayList<Integer>();
         for (Player p : list.getSelectedValuesList())
         	result.add(p.getID());
@@ -64,7 +66,7 @@ public class ListTransferHandler extends TransferHandler {
     
     @Override
 	public boolean importData(TransferHandler.TransferSupport info) {
-        importDone = true;
+        sameComponent = info.getComponent() == comp;
     	if (!info.isDrop())
             return false;
         List<Integer> data;
@@ -94,7 +96,7 @@ public class ListTransferHandler extends TransferHandler {
 	        int at;
 	        for (int i = indices.length - 1; i >= 0; i--) {
 	        	at = indices[i];
-	        	if (importDone && at > index)
+	        	if (sameComponent && at > index)
 	        		at += indices.length;
 	        	model.removeElementAt(at);
 	        }
