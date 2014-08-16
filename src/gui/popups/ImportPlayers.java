@@ -163,11 +163,11 @@ public class ImportPlayers extends Watcher {
 			}
 			Player pl = null;
 			if (t.getSingle()) {
-				pl = new Single(t, toAdd.toArray(new String[0]));
+				pl = t.newSingle(toAdd.toArray(new String[0]));
 			} else if (t.getDouble()) {
-				pl = new Double(t, toAdd.toArray(new String[0]));
+				pl = t.newDouble(toAdd.toArray(new String[0]));
 			} else if (t.get2Team()) {
-				pl = new Team2(t, toAdd.toArray(new String[0]));
+				pl = t.newTeam2(toAdd.toArray(new String[0]));
 			} else {
 				throw new InconsistentStateException();
 			}

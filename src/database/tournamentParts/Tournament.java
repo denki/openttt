@@ -9,7 +9,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -18,6 +20,7 @@ import database.match.Match;
 import database.players.Double;
 import database.players.Player;
 import database.players.Single;
+import database.players.Team2;
 import exceptions.InputFormatException;
 
 public class Tournament {
@@ -25,11 +28,13 @@ public class Tournament {
 	private KnockOut knockOut;
 	private Properties properties;
 	private Qualifying qualifying;
+	private Map<Integer, Player> players;
 	private int state;
 
 	public Tournament() {
 		properties = new Properties();
 		qualifying = new Qualifying(1);
+		players = new HashMap<Integer, Player>();
 		state = 0;
 	}
 
@@ -266,7 +271,8 @@ public class Tournament {
 				for (Player p : g.getPlayers()) {
 					Player p1;
 					try {
-						p1 = new Double(p);
+						p1 = new Double(players.size(), p);
+						players.put(p.getID(), p);
 						help.add(p1);
 					} catch (InputFormatException e) {
 						System.err
@@ -283,7 +289,8 @@ public class Tournament {
 			for (Player p : qualifying.getUnassigned()) {
 				Player p1;
 				try {
-					p1 = new Double(p);
+					p1 = new Double(players.size(), p);
+					players.put(p.getID(), p);
 					help.add(p1);
 				} catch (InputFormatException e) {
 					System.err
@@ -319,16 +326,52 @@ public class Tournament {
 		setUnsaved(true);
 	}
 
+	public Single newSingle(String[] splitted) {
+		try {
+			Single p = new Single(players.size(), this, splitted);
+			players.put(p.getID(), p);
+			return p;
+		} catch (InputFormatException e) {
+			return null;
+		}
+	}
+	
+	public Double newDouble(String[] splitted) {
+		try {
+			Double p = new Double(players.size(), this, splitted);
+			players.put(p.getID(), p);
+			return p;
+		} catch (InputFormatException e) {
+			return null;
+		}
+	}
+	
+	public Team2 newTeam2(String[] splitted) {
+		try {
+			Team2 p = new Team2(players.size(), this, splitted);
+			players.put(p.getID(), p);
+			return p;
+		} catch (InputFormatException e) {
+			return null;
+		}
+	}
+
+	public Player getPlayer(Integer id) {
+		return players.get(id);
+	}
+	
 	public void setSingle(boolean dv) {
 		if (!properties.TYPE_SINGLE & dv) {
 			for (Group g : qualifying.getGroups()) {
 				for (Player p : g.getPlayers()) {
-					Player p1 = new Single(p);
+					Player p1 = new Single(players.size(), p);
+					players.put(p1.getID(), p1);
 					g.getPlayers().set(g.getPlayers().indexOf(p), p1);
 				}
 			}
 			for (Player p : qualifying.getUnassigned()) {
-				Player p1 = new Single(p);
+				Player p1 = new Single(players.size(), p);
+				players.put(p1.getID(), p1);
 				qualifying.getUnassigned().set(
 						qualifying.getUnassigned().indexOf(p), p1);
 			}

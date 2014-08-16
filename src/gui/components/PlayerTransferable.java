@@ -10,9 +10,9 @@ import database.players.Player;
 
 public class PlayerTransferable implements Transferable {
 
-	private List<Player> player;
+	private List<Integer> player;
 	
-	public PlayerTransferable(List<Player> player) {
+	public PlayerTransferable(List<Integer> player) {
 		super();
 		this.player = player;
 	}

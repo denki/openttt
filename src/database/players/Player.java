@@ -13,6 +13,7 @@ import exceptions.InputFormatException;
 
 public abstract class Player extends Node implements Comparable<Player> {
 	private List<Match> matches;
+	private Integer id;
 	protected Tournament tournament;
 	private boolean unsaved = false, there = false, paid = false;
 
@@ -20,7 +21,8 @@ public abstract class Player extends Node implements Comparable<Player> {
 
 	}
 
-	Player(Tournament tournament) {
+	Player(Integer id, Tournament tournament) {
+		this.setID(id);
 		this.tournament = tournament;
 		matches = new ArrayList<Match>();
 	}
@@ -28,7 +30,7 @@ public abstract class Player extends Node implements Comparable<Player> {
 	public static Player getNobody() {
 		// TODO That solution is really bad -> class Nobody
 		try {
-			return new Single(null, new String[] { "nobody", "nobody" });
+			return new Single(-1, null, new String[] { "nobody", "nobody" });
 		} catch (InputFormatException e) {
 			System.err
 					.println("Unexpected behaviour in database.Player.getNobody()");
@@ -230,4 +232,12 @@ public abstract class Player extends Node implements Comparable<Player> {
 	}
 
 	public abstract String getClub();
+
+	public Integer getID() {
+		return id;
+	}
+
+	public void setID(Integer id) {
+		this.id = id;
+	}
 }

@@ -35,6 +35,20 @@ public class Qualifying extends Commandable {
 		group.addPlayer(player);
 		unassigned.remove(player);
 		unsaved = true;
+	} 
+	
+	public void removeFromGroup(Player player, Group group) {
+		if (group == null)
+			unassigned.remove(player);
+		else
+			group.delPlayer(player);
+	}
+	
+	public void addToGroup(Player player, Group group) {
+		if (group == null)
+			unassigned.add(player);
+		else
+			group.addPlayer(player);
 	}
 
 	public void delGroup(int idx) {

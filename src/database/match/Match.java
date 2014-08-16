@@ -410,10 +410,10 @@ public class Match extends Edge<Player> implements Comparable<Match> {
 		if (leftPlayer.getClass() == Team2.class & submatches == null) {
 			submatches = new ArrayList<Match>();
 			for (int[] matching : leftPlayer.getTournament().getProperties().subMatches) {
-				Player p1 = new Single(leftPlayer.getTournament(), leftPlayer
-						.getPersons().get(matching[0] - 1)), p2 = new Single(
-						leftPlayer.getTournament(), rightPlayer.getPersons()
-								.get(matching[1] - 1));
+				Player p1 = new Single(leftPlayer.getID(), leftPlayer.getTournament(),
+						leftPlayer.getPersons().get(matching[0] - 1));
+				Player p2 = new Single(leftPlayer.getID(), leftPlayer.getTournament(),
+						rightPlayer.getPersons().get(matching[1] - 1));
 				submatches.add(new Match(p1, p2));
 			}
 		}

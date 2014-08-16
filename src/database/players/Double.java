@@ -29,8 +29,8 @@ public class Double extends Player implements Serializable{
 	 * @param s Player to construct of
 	 * @throws InputFormatException thrown if the Player has not pre- and surname
 	 */
-	public Double(Player s) throws InputFormatException {
-		this(s.tournament, new String[] { s.getPersons().get(0).getSurname(),
+	public Double(Integer id, Player s) throws InputFormatException {
+		this(id, s.tournament, new String[] { s.getPersons().get(0).getSurname(),
 				s.getPersons().get(0).getPrename() });
 	}
 
@@ -40,8 +40,8 @@ public class Double extends Player implements Serializable{
 	 * @param name List of Strings
 	 * @throws InputFormatException if name has the wrong format
 	 */
-	public Double(Tournament t, String[] name) throws InputFormatException {
-		super(t);
+	public Double(Integer id, Tournament t, String[] name) throws InputFormatException {
+		super(id, t);
 		switch (name.length) {
 		case 2:
 			pLeft = new Person(name[0]);

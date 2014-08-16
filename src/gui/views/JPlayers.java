@@ -2,7 +2,6 @@ package gui.views;
 
 import gui.Language;
 import gui.Main;
-import gui.components.JPlayerCheckBox;
 import gui.components.ListTransferHandler;
 import gui.popups.ImportPlayers;
 import gui.popups.JPlayerDetails;
@@ -25,6 +24,7 @@ import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.DropMode;
@@ -36,8 +36,6 @@ import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
-import javax.swing.ListModel;
-import javax.swing.TransferHandler;
 import javax.swing.filechooser.FileFilter;
 
 import database.players.Double;
@@ -51,23 +49,23 @@ import exceptions.InputFormatException;
 
 @SuppressWarnings("serial")
 public class JPlayers extends View implements KeyListener {
-	
+
 	private boolean enableGroups;
 	private Tournament tournament;
 	private List<Group> groups;
 	private List<Player> unassignedPlayers;
-	
+
 	private DefaultListModel<Player> mUnassignedPlayers, mGroupedPlayers;
 
 	private JLabel lPlayer, lSearch;
-	
+
 	private JButton jNewPlayer, jRemovePlayer, jAssignPlayer, jUnassignPlayer,
 			jAddGroup, jDelGroup, jPlayerDown, jPlayerUp, jImport;
-	
+
 	private JTextField jPlayerName, jFilter;
 	private JList<Player> jUnassignedPlayers, jGroupedPlayers;
 	private JComboBox<Group> jGroups;
-	
+
 	class DefaultMouseListener implements MouseListener {
 		@Override
 		public void mouseClicked(MouseEvent e) {
@@ -98,7 +96,7 @@ public class JPlayers extends View implements KeyListener {
 			jGroups.setSelectedIndex(jGroups.getItemCount() - 1);
 		}
 	};
-	
+
 	Action assignPlayer = new AbstractAction() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -112,7 +110,7 @@ public class JPlayers extends View implements KeyListener {
 				}
 				jUnassignedPlayers.setModel(mUnassignedPlayers);
 				jGroupedPlayers.setModel(mGroupedPlayers);
-//				main.refreshState();
+				main.refreshState();
 			}
 		}
 	};
@@ -165,7 +163,7 @@ public class JPlayers extends View implements KeyListener {
 
 		}
 	};
-	
+
 	Action playerDown = new AbstractAction() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -206,16 +204,21 @@ public class JPlayers extends View implements KeyListener {
 
 	ListCellRenderer<Player> rnd = new ListCellRenderer<Player>() {
 		@Override
-		public Component getListCellRendererComponent(JList<? extends Player> list, Player plr,
-				int index, boolean isSelected, boolean cellHasFocus) {
-			final JPlayerCheckBox cb = new JPlayerCheckBox(plr);
+		public Component getListCellRendererComponent(
+				JList<? extends Player> list, Player plr, int index,
+				boolean isSelected, boolean cellHasFocus) {
+			final JLabel cb = new JLabel();
+			cb.setText("<html>" + plr.getFullName() + "<br/> " + plr.getClub()
+					+ "</html>");
 			cb.setOpaque(true);
-			if (isSelected) {
-				cb.setForeground(getBackground());
-				cb.setBackground(getForeground());
-			} else {
-				cb.setBackground(Color.white);
-			}
+			cb.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, true));
+//			if (isSelected) {
+//				cb.setForeground(getBackground());
+//				cb.setBackground(getForeground());
+//			}
+			// else {
+			// cb.setBackground(Color.white);
+			// }
 			return cb;
 		}
 	};
@@ -233,7 +236,7 @@ public class JPlayers extends View implements KeyListener {
 			}
 		}
 	};
-	
+
 	Action newPlayer = new AbstractAction() {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
@@ -241,30 +244,23 @@ public class JPlayers extends View implements KeyListener {
 			Player player = null;
 			if (name.length() != 0) {
 				String[] splitted = name.split(",");
-				for (int i = 0; i < splitted.length; i++) {
+				for (int i = 0; i < splitted.length; i++)
 					while (splitted[i].startsWith(" "))
 						splitted[i] = splitted[i].substring(1);
-				}
-				try {
-					if (tournament.getSingle()) {
-						player = new Single(tournament, splitted);
-					}
-					if (tournament.getDouble()) {
-						player = new Double(tournament, splitted);
-					}
-					if (tournament.get2Team()) {
-						player = new Team2(tournament, splitted);
-					}
-				} catch (InputFormatException e) {
-
+				if (tournament.getSingle()) {
+					player = tournament.newSingle(splitted);
+				} else if (tournament.getDouble()) {
+					player = tournament.newDouble(splitted);
+				} else if (tournament.get2Team()) {
+					player = tournament.newTeam2(splitted);
 				}
 			}
 			if (player != null) {
 				unassignedPlayers.add(player);
 				mUnassignedPlayers.addElement(player);
 				jPlayerName.setText("");
-				jUnassignedPlayers.setModel(mUnassignedPlayers);
-//				main.refreshState();
+				// jUnassignedPlayers.setModel(mUnassignedPlayers);
+				main.refreshState();
 			} else {
 				jPlayerName.setBackground(Color.RED);
 			}
@@ -275,12 +271,12 @@ public class JPlayers extends View implements KeyListener {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			if (!jUnassignedPlayers.getSelectedValuesList().isEmpty()) {
-				for (Object o : jUnassignedPlayers.getSelectedValuesList()){
+				for (Object o : jUnassignedPlayers.getSelectedValuesList()) {
 					unassignedPlayers.remove(o);
 					mUnassignedPlayers.removeElement(o);
 				}
-				jUnassignedPlayers.setModel(mUnassignedPlayers);
-//				main.refreshState();
+				// jUnassignedPlayers.setModel(mUnassignedPlayers);
+				main.refreshState();
 			}
 		}
 	};
@@ -296,40 +292,45 @@ public class JPlayers extends View implements KeyListener {
 	@Override
 	public void generateWindow() {
 		// non-button elements
-		mUnassignedPlayers = new DefaultListModel<Player>();		
+		mUnassignedPlayers = new DefaultListModel<Player>();
 		jUnassignedPlayers = new JList<Player>(mUnassignedPlayers);
-		jUnassignedPlayers.addMouseListener(new DefaultMouseListener(){
+		jUnassignedPlayers.addMouseListener(new DefaultMouseListener() {
 			@Override
-			public void mouseClicked(MouseEvent arg0){
-				double x = arg0.getPoint().getX();
-				switch (arg0.getButton()){
+			public void mouseClicked(MouseEvent arg0) {
+				// double x = arg0.getPoint().getX();
+				switch (arg0.getButton()) {
 				case MouseEvent.BUTTON1:
-					if (arg0.getClickCount() == 2) jAssignPlayer.doClick();
-					else if (arg0.getClickCount() == 1) {
-						if (x < 21.0) {
-							int idx1 = jUnassignedPlayers.locationToIndex(arg0.getPoint());
-							if (idx1 != -1) {
-								Player pl = jUnassignedPlayers.getModel().getElementAt(idx1);
-								pl.setThere(!pl.isThere());
-//								main.setEnabledPattern(getIconEnabledPattern());
-								main.refreshState();
-							}
-						}
-					}
+					if (arg0.getClickCount() == 2)
+						jAssignPlayer.doClick();
+					// else if (arg0.getClickCount() == 1) {
+					// if (x < 21.0) {
+					// int idx1 =
+					// jUnassignedPlayers.locationToIndex(arg0.getPoint());
+					// if (idx1 != -1) {
+					// Player pl =
+					// jUnassignedPlayers.getModel().getElementAt(idx1);
+					// pl.setThere(!pl.isThere());
+					// main.setEnabledPattern(getIconEnabledPattern());
+					// main.refreshState();
+					// }
+					// }
+					// }
 					break;
-				case MouseEvent.BUTTON2:
-					if (arg0.getClickCount() == 1) {
-						int idx2 = jUnassignedPlayers.locationToIndex(arg0.getPoint());
-						if (idx2 != -1) {
-							Player pl = jUnassignedPlayers.getModel().getElementAt(idx2);
-							pl.setThere(!pl.isThere());
-							main.setEnabledPattern(getIconEnabledPattern());
-							repaint();
-						}
-					}
-					break;
+				// case MouseEvent.BUTTON2:
+				// if (arg0.getClickCount() == 1) {
+				// int idx2 =
+				// jUnassignedPlayers.locationToIndex(arg0.getPoint());
+				// if (idx2 != -1) {
+				// Player pl = jUnassignedPlayers.getModel().getElementAt(idx2);
+				// pl.setThere(!pl.isThere());
+				// main.setEnabledPattern(getIconEnabledPattern());
+				// repaint();
+				// }
+				// }
+				// break;
 				case MouseEvent.BUTTON3:
-					int idx3 = jUnassignedPlayers.locationToIndex(arg0.getPoint());
+					int idx3 = jUnassignedPlayers.locationToIndex(arg0
+							.getPoint());
 					jUnassignedPlayers.setSelectedIndex(idx3);
 					for (Object o : jUnassignedPlayers.getSelectedValuesList()) {
 						new JPlayerDetails(((Player) o).getPersons(), main);
@@ -340,40 +341,44 @@ public class JPlayers extends View implements KeyListener {
 		});
 		jUnassignedPlayers.setCellRenderer(rnd);
 		jUnassignedPlayers.setDragEnabled(true);
-		jUnassignedPlayers.setTransferHandler(new ListTransferHandler(jUnassignedPlayers, mUnassignedPlayers));
+		jUnassignedPlayers.setTransferHandler(new ListTransferHandler(
+				jUnassignedPlayers, mUnassignedPlayers, tournament, null));
 
 		mGroupedPlayers = new DefaultListModel<Player>();
 		jGroupedPlayers = new JList<Player>(mGroupedPlayers);
 		jGroupedPlayers.addMouseListener(new DefaultMouseListener() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				double x = arg0.getPoint().getX();
-				switch (arg0.getButton()){
+				// double x = arg0.getPoint().getX();
+				switch (arg0.getButton()) {
 				case MouseEvent.BUTTON1:
-					if (arg0.getClickCount() == 2) jUnassignPlayer.doClick();
-					else if (arg0.getClickCount() == 1) {
-						if (x < 21.0) {
-							int idx1 = jGroupedPlayers.locationToIndex(arg0.getPoint());
-							if (idx1 != -1) {
-								Player pl = jGroupedPlayers.getModel().getElementAt(idx1);
-								pl.setThere(!pl.isThere());
-//								main.setEnabledPattern(getIconEnabledPattern());
-								main.refreshState();
-							}
-						}
-					}
+					if (arg0.getClickCount() == 2)
+						jUnassignPlayer.doClick();
+					// else if (arg0.getClickCount() == 1) {
+					// if (x < 21.0) {
+					// int idx1 =
+					// jGroupedPlayers.locationToIndex(arg0.getPoint());
+					// if (idx1 != -1) {
+					// Player pl =
+					// jGroupedPlayers.getModel().getElementAt(idx1);
+					// pl.setThere(!pl.isThere());
+					// main.setEnabledPattern(getIconEnabledPattern());
+					// main.refreshState();
+					// }
+					// }
+					// }
 					break;
-				case MouseEvent.BUTTON2:
-					if (arg0.getClickCount() == 1) {
-						int idx2 = jGroupedPlayers.locationToIndex(arg0.getPoint());
-						if (idx2 != -1) {
-							Player pl = jGroupedPlayers.getModel().getElementAt(idx2);
-							pl.setThere(!pl.isThere());
-							main.setEnabledPattern(getIconEnabledPattern());
-							repaint();
-						}
-					}
-					break;
+				// case MouseEvent.BUTTON2:
+				// if (arg0.getClickCount() == 1) {
+				// int idx2 = jGroupedPlayers.locationToIndex(arg0.getPoint());
+				// if (idx2 != -1) {
+				// Player pl = jGroupedPlayers.getModel().getElementAt(idx2);
+				// pl.setThere(!pl.isThere());
+				// main.setEnabledPattern(getIconEnabledPattern());
+				// repaint();
+				// }
+				// }
+				// break;
 				case MouseEvent.BUTTON3:
 					int idx3 = jGroupedPlayers.locationToIndex(arg0.getPoint());
 					if (idx3 != -1) {
@@ -388,7 +393,9 @@ public class JPlayers extends View implements KeyListener {
 		jGroupedPlayers.setCellRenderer(rnd);
 		jGroupedPlayers.setDragEnabled(true);
 		jGroupedPlayers.setDropMode(DropMode.INSERT);
-		jGroupedPlayers.setTransferHandler(new ListTransferHandler(jGroupedPlayers, mGroupedPlayers));
+		jGroupedPlayers.setTransferHandler(new ListTransferHandler(
+				jGroupedPlayers, mGroupedPlayers, tournament, tournament
+						.getQualifying().getGroups().get(0)));
 
 		jPlayerName = new JTextField() {
 			@Override
@@ -580,7 +587,8 @@ public class JPlayers extends View implements KeyListener {
 	@Override
 	public String getIconEnabledPattern() {
 		boolean quali = tournament.getProperties().DO_QUALIFYING;
-		return isReady() ? (quali ? "1111111111" : "1111101111") : (quali ? "1111111110" : "1111101110");
+		return isReady() ? (quali ? "1111111111" : "1111101111")
+				: (quali ? "1111111110" : "1111101110");
 	}
 
 	private void importPlayers(String file) {
@@ -596,11 +604,11 @@ public class JPlayers extends View implements KeyListener {
 			return false;
 
 		for (Group g : groups) {
-			if (g.getSize() == 0)
+			if (g.getSize() < 2)
 				return false;
-			for (Player p : g.getPlayers())
-				if (!p.isThere())
-					return false;
+			// for (Player p : g.getPlayers())
+			// if (!p.isThere())
+			// return false;
 		}
 
 		return true;
@@ -657,11 +665,17 @@ public class JPlayers extends View implements KeyListener {
 				if (contains)
 					lst.add(p);
 			}
-		for (Player p: lst)
+		for (Player p : lst)
 			mUnassignedPlayers.addElement(p);
-		if (jGroups.getSelectedItem() != null)
-			for (Player p: ((Group) jGroups.getSelectedItem()).getPlayers())
+		if (jGroups.getSelectedItem() != null) {
+			jGroupedPlayers.setTransferHandler(new ListTransferHandler(
+					jGroupedPlayers, mGroupedPlayers, tournament,
+					(Group) jGroups.getSelectedItem()));
+			for (Player p : ((Group) jGroups.getSelectedItem()).getPlayers())
 				mGroupedPlayers.addElement(p);
+		} else
+			jGroupedPlayers.setTransferHandler(new ListTransferHandler(
+					jGroupedPlayers, mGroupedPlayers, tournament, null));
 		jUnassignedPlayers.setModel(mUnassignedPlayers);
 		jGroupedPlayers.setModel(mGroupedPlayers);
 	}

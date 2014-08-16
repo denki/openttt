@@ -14,8 +14,8 @@ public class Team2 extends Player {
 		super();
 	}
 
-	public Team2(Tournament t, String[] name) throws InputFormatException {
-		super(t);
+	public Team2(Integer id, Tournament t, String[] name) throws InputFormatException {
+		super(id, t);
 		for (int i = 0; i < name.length; i++) {
 			name[i] = name[i].substring(0, 1).toUpperCase()
 					+ name[i].substring(1);

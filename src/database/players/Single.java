@@ -16,17 +16,17 @@ public class Single extends Player implements Serializable{
 		super();
 	}
 
-	public Single(Player p) {
-		this(p.tournament, p.getPersons().get(0));
+	public Single(Integer id, Player p) {
+		this(id, p.tournament, p.getPersons().get(0));
 	}
 
-	public Single(Tournament t, Person p) {
-		super(t);
+	public Single(Integer id, Tournament t, Person p) {
+		super(id, t);
 		person = p;
 	}
 
-	public Single(Tournament t, String[] name) throws InputFormatException {
-		super(t);
+	public Single(Integer id, Tournament t, String[] name) throws InputFormatException {
+		super(id, t);
 		switch (name.length) {
 		case 1:
 			person = new Person(name[0]);
