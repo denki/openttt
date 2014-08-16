@@ -8,6 +8,7 @@ import gui.popups.JPlayerDetails;
 import gui.templates.IconButton;
 import gui.templates.View;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -33,9 +34,11 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
+import javax.swing.border.Border;
 import javax.swing.filechooser.FileFilter;
 
 import database.players.Double;
@@ -208,11 +211,16 @@ public class JPlayers extends View implements KeyListener {
 				JList<? extends Player> list, Player plr, int index,
 				boolean isSelected, boolean cellHasFocus) {
 			final JLabel cb = new JLabel();
-			final Color selBG = javax.swing.UIManager.getDefaults().getColor("List.selectionBackground");
-			final Color selFG = javax.swing.UIManager.getDefaults().getColor("List.selectionForeground");
+			final Color selBG = javax.swing.UIManager.getDefaults().getColor(
+					"List.selectionBackground");
+			final Color selFG = javax.swing.UIManager.getDefaults().getColor(
+					"List.selectionForeground");
 			cb.setText("<html>" + plr.getFullName() + "<br/> " + plr.getClub()
 					+ "</html>");
-			cb.setBorder(BorderFactory.createLineBorder(getForeground(), 1, true));
+			Border border = BorderFactory.createCompoundBorder(
+					BorderFactory.createEmptyBorder(2, 2, 2, 2),
+					BorderFactory.createLineBorder(getForeground(), 1, true));
+			cb.setBorder(border);
 			if (isSelected) {
 				cb.setOpaque(true);
 				cb.setForeground(selFG);
@@ -222,6 +230,38 @@ public class JPlayers extends View implements KeyListener {
 		}
 	};
 
+	ListCellRenderer<Player> rnd2 = new ListCellRenderer<Player>() {
+		@Override
+		public Component getListCellRendererComponent(
+				JList<? extends Player> list, Player plr, int index,
+				boolean isSelected, boolean cellHasFocus) {
+			final JLabel cb = new JLabel();
+			final Color selBG = javax.swing.UIManager.getDefaults().getColor(
+					"List.selectionBackground");
+			final Color selFG = javax.swing.UIManager.getDefaults().getColor(
+					"List.selectionForeground");
+			cb.setText("<html>" + plr.getFullName() + "<br/> " + plr.getClub()
+					+ "</html>");
+			Border border = BorderFactory.createCompoundBorder(
+					BorderFactory.createEmptyBorder(2, 2, 2, 2),
+					BorderFactory.createLineBorder(getForeground(), 1, true));
+			cb.setBorder(border);
+			if (isSelected) {
+				cb.setOpaque(true);
+				cb.setForeground(selFG);
+				cb.setBackground(selBG);
+			}
+			JLabel cb2 = new JLabel("<html><strong>" + (index + 1) + ". </strong></html>");
+			cb2.setFont(cb.getFont().deriveFont(14));
+			JPanel pan = new JPanel();
+			pan.setOpaque(false);
+			pan.add(cb2, BorderLayout.WEST);
+			pan.add(cb, BorderLayout.CENTER);
+			pan.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 10));
+			return pan;
+		}
+	};
+	
 	Action unassignPlayer = new AbstractAction() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -343,6 +383,8 @@ public class JPlayers extends View implements KeyListener {
 		jUnassignedPlayers.setDropMode(DropMode.INSERT);
 		jUnassignedPlayers.setTransferHandler(new ListTransferHandler(
 				jUnassignedPlayers, mUnassignedPlayers, tournament, null));
+		jUnassignedPlayers.setLayoutOrientation(JList.VERTICAL_WRAP);
+		jUnassignedPlayers.setVisibleRowCount(-1);
 
 		mGroupedPlayers = new DefaultListModel<Player>();
 		jGroupedPlayers = new JList<Player>(mGroupedPlayers);
@@ -390,12 +432,14 @@ public class JPlayers extends View implements KeyListener {
 				}
 			}
 		});
-		jGroupedPlayers.setCellRenderer(rnd);
+		jGroupedPlayers.setCellRenderer(rnd2);
 		jGroupedPlayers.setDragEnabled(true);
 		jGroupedPlayers.setDropMode(DropMode.INSERT);
 		jGroupedPlayers.setTransferHandler(new ListTransferHandler(
 				jGroupedPlayers, mGroupedPlayers, tournament, tournament
 						.getQualifying().getGroups().get(0)));
+		jGroupedPlayers.setLayoutOrientation(JList.VERTICAL_WRAP);
+		jGroupedPlayers.setVisibleRowCount(-1);
 
 		jPlayerName = new JTextField() {
 			@Override
