@@ -25,14 +25,21 @@ public class ListTransferHandler extends TransferHandler {
     private JList<Player> list; 
     private Tournament tournament;
     private Group group;
+    private int[] indices;
+    private int index;
+    private boolean importDone;
+    private boolean exporting;
     private DefaultListModel<Player> model;     
     
     public ListTransferHandler(JList<Player> lp, DefaultListModel<Player> lm, Tournament t, Group g) {
 		super();
-    	this.list = lp;
-    	this.model = lm;
-    	this.tournament = t;
-    	this.group = g;
+    	list = lp;
+    	model = lm;
+    	tournament = t;
+    	group = g;
+    	indices = null;
+    	importDone = false;
+    	exporting = false;
 	}
 
     @Override
@@ -42,9 +49,11 @@ public class ListTransferHandler extends TransferHandler {
 
     @Override
 	protected Transferable createTransferable(JComponent c) {
+    	exporting = true;
         List<Integer> result = new ArrayList<Integer>();
         for (Player p : list.getSelectedValuesList())
         	result.add(p.getID());
+        indices = ((JList) c).getSelectedIndices();
     	return new PlayerTransferable(result);
     }
     
@@ -55,12 +64,14 @@ public class ListTransferHandler extends TransferHandler {
     
     @Override
 	public boolean importData(TransferHandler.TransferSupport info) {
-        if (!info.isDrop())
+        importDone = true;
+    	if (!info.isDrop())
             return false;
         List<Integer> data;
 		try {
 			data = (List<Integer>) info.getTransferable().getTransferData(DataFlavor.stringFlavor);
-            int idx = ((JList.DropLocation) info.getDropLocation()).getIndex();
+            index = ((JList.DropLocation) info.getDropLocation()).getIndex();
+            int idx = index;
 			for (Integer id : data) {
             	model.add(idx, tournament.getPlayer(id));
             	tournament.getQualifying().addToGroup(idx, tournament.getPlayer(id), group);
@@ -70,8 +81,8 @@ public class ListTransferHandler extends TransferHandler {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        
-        list.setModel(model);
+        if (!exporting)
+        	list.setModel(model);
         return true;
     }
 
@@ -80,10 +91,16 @@ public class ListTransferHandler extends TransferHandler {
     	List<Integer> data;
 		try {
 			data = (List<Integer>) t.getTransferData(DataFlavor.stringFlavor);
-        for (Integer id : data) {
-        	model.removeElement(tournament.getPlayer(id));
-        	tournament.getQualifying().removeFromGroup(tournament.getPlayer(id), group);
-        }
+	        int at;
+	        for (int i = indices.length - 1; i >= 0; i--) {
+	        	at = indices[i];
+	        	if (importDone && at > index)
+	        		at += indices.length;
+	        	model.removeElementAt(at);
+	        }
+			for (Integer id : data) {
+				tournament.getQualifying().removeFromGroup(tournament.getPlayer(id), group);
+			}
 		} catch (UnsupportedFlavorException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
