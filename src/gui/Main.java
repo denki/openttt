@@ -7,6 +7,7 @@ import gui.templates.View;
 import gui.templates.Watcher;
 import gui.views.JKnockOut;
 import gui.views.JKnockOutBuilder;
+import gui.views.JKnockOutBuilder2;
 import gui.views.JKnockOutPreBuilder;
 import gui.views.JPlayers;
 import gui.views.JProperties;
@@ -190,7 +191,7 @@ public class Main {
 
 	public void next() {
 		if (tournament.getState() == 4) {
-			((JKnockOutBuilder) currentView).next();
+			((JKnockOutBuilder2) currentView).next();
 		}
 		tournament.incState();
 		setView(tournament.getState());
@@ -388,7 +389,7 @@ public class Main {
 			currentView = new JQualifying(this);
 			break;
 		case 4:
-			currentView = new JKnockOutBuilder(this);
+			currentView = new JKnockOutBuilder2(this);
 			break;
 		case 5:
 			currentView = new JKnockOut(this);

@@ -127,7 +127,7 @@ public class Group extends Commandable{
 		List<Player> help = new ArrayList<Player>();
 		help.addAll(players);
 		Collections.sort(help);
-		return help.subList(best - 1, worst - 1);
+		return help.subList(best - 1, worst);
 	}
 
 	/**

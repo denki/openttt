@@ -106,7 +106,7 @@ public abstract class Player extends Node implements Comparable<Player> {
 						+ ".Gr"
 						+ (tournament.getQualifying().getGroups().indexOf(g) + 1);
 			}
-		result += ": " + toString();
+//		result += ": " + toString();
 		return result;
 	}
 

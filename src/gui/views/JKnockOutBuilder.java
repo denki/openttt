@@ -268,7 +268,7 @@ public class JKnockOutBuilder extends View {
 			else
 				players.addAll(g.getPlayersByPlace(
 						((Integer) jOffset.getValue()),
-						((Integer) jToPlace.getValue()) + 1));
+						((Integer) jToPlace.getValue())));
 		pan2.removeAll();
 		jComboBoxes = new ArrayList<JComboBox<Player>>();
 		for (int i = 0; i < Calculator.nextPowerOfTwo(players.size() - 1); i++) {

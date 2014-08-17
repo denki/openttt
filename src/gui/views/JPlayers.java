@@ -3,6 +3,7 @@ package gui.views;
 import gui.Language;
 import gui.Main;
 import gui.components.ListTransferHandler;
+import gui.components.PlayerListRenderer;
 import gui.popups.ImportPlayers;
 import gui.popups.JPlayerDetails;
 import gui.templates.IconButton;
@@ -205,30 +206,7 @@ public class JPlayers extends View implements KeyListener {
 		}
 	};
 
-	ListCellRenderer<Player> rnd = new ListCellRenderer<Player>() {
-		@Override
-		public Component getListCellRendererComponent(
-				JList<? extends Player> list, Player plr, int index,
-				boolean isSelected, boolean cellHasFocus) {
-			final JLabel cb = new JLabel();
-			final Color selBG = javax.swing.UIManager.getDefaults().getColor(
-					"List.selectionBackground");
-			final Color selFG = javax.swing.UIManager.getDefaults().getColor(
-					"List.selectionForeground");
-			cb.setText("<html>" + plr.getFullName() + "<br/> " + plr.getClub()
-					+ "</html>");
-			Border border = BorderFactory.createCompoundBorder(
-					BorderFactory.createEmptyBorder(2, 2, 2, 2),
-					BorderFactory.createLineBorder(getForeground(), 1, true));
-			cb.setBorder(border);
-			if (isSelected) {
-				cb.setOpaque(true);
-				cb.setForeground(selFG);
-				cb.setBackground(selBG);
-			}
-			return cb;
-		}
-	};
+	ListCellRenderer<Player> rnd = new PlayerListRenderer();
 
 	ListCellRenderer<Player> rnd2 = new ListCellRenderer<Player>() {
 		@Override
@@ -251,7 +229,8 @@ public class JPlayers extends View implements KeyListener {
 				cb.setForeground(selFG);
 				cb.setBackground(selBG);
 			}
-			JLabel cb2 = new JLabel("<html><strong>" + (index + 1) + ". </strong></html>");
+			JLabel cb2 = new JLabel("<html><strong>" + (index + 1)
+					+ ". </strong></html>");
 			cb2.setFont(cb.getFont().deriveFont(14));
 			JPanel pan = new JPanel();
 			pan.setOpaque(false);
@@ -261,7 +240,7 @@ public class JPlayers extends View implements KeyListener {
 			return pan;
 		}
 	};
-	
+
 	Action unassignPlayer = new AbstractAction() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -382,7 +361,8 @@ public class JPlayers extends View implements KeyListener {
 		jUnassignedPlayers.setDragEnabled(true);
 		jUnassignedPlayers.setDropMode(DropMode.INSERT);
 		jUnassignedPlayers.setTransferHandler(new ListTransferHandler(
-				jUnassignedPlayers, mUnassignedPlayers, tournament, null));
+				jUnassignedPlayers, mUnassignedPlayers, tournament
+						.getQualifying().getUnassigned(), tournament));
 		jUnassignedPlayers.setLayoutOrientation(JList.VERTICAL_WRAP);
 		jUnassignedPlayers.setVisibleRowCount(-1);
 
@@ -436,8 +416,8 @@ public class JPlayers extends View implements KeyListener {
 		jGroupedPlayers.setDragEnabled(true);
 		jGroupedPlayers.setDropMode(DropMode.INSERT);
 		jGroupedPlayers.setTransferHandler(new ListTransferHandler(
-				jGroupedPlayers, mGroupedPlayers, tournament, tournament
-						.getQualifying().getGroups().get(0)));
+				jGroupedPlayers, mGroupedPlayers, tournament.getQualifying()
+						.getGroups().get(0).getPlayers(), tournament));
 		jGroupedPlayers.setLayoutOrientation(JList.VERTICAL_WRAP);
 		jGroupedPlayers.setVisibleRowCount(-1);
 
@@ -713,13 +693,14 @@ public class JPlayers extends View implements KeyListener {
 			mUnassignedPlayers.addElement(p);
 		if (jGroups.getSelectedItem() != null) {
 			jGroupedPlayers.setTransferHandler(new ListTransferHandler(
-					jGroupedPlayers, mGroupedPlayers, tournament,
-					(Group) jGroups.getSelectedItem()));
+					jGroupedPlayers, mGroupedPlayers, ((Group) jGroups
+							.getSelectedItem()).getPlayers(), tournament));
 			for (Player p : ((Group) jGroups.getSelectedItem()).getPlayers())
 				mGroupedPlayers.addElement(p);
 		} else
 			jGroupedPlayers.setTransferHandler(new ListTransferHandler(
-					jGroupedPlayers, mGroupedPlayers, tournament, null));
+					jGroupedPlayers, mGroupedPlayers, tournament
+							.getQualifying().getUnassigned(), tournament));
 		jUnassignedPlayers.setModel(mUnassignedPlayers);
 		jGroupedPlayers.setModel(mGroupedPlayers);
 	}
