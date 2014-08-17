@@ -1,5 +1,8 @@
 package gui.components;
 
+import gui.Main;
+import gui.templates.View;
+
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -31,9 +34,11 @@ public class ListTransferHandler extends TransferHandler {
 	private boolean exporting;
 	private JComponent comp;
 	private DefaultListModel<Player> model;
+	private View view;
+	private Main main;
 
 	public ListTransferHandler(JList<Player> lp, DefaultListModel<Player> lm,
-			List<Player> plrs, Tournament t) {
+			List<Player> plrs, Tournament t, View v, Main m) {
 		super();
 		list = lp;
 		model = lm;
@@ -42,6 +47,8 @@ public class ListTransferHandler extends TransferHandler {
 		indices = null;
 		sameComponent = false;
 		exporting = false;
+		view = v;
+		main = m;
 	}
 
 	@Override
@@ -115,5 +122,6 @@ public class ListTransferHandler extends TransferHandler {
 		}
 
 		list.setModel(model);
+		main.setEnabledPattern(view.getIconEnabledPattern());
 	}
 }

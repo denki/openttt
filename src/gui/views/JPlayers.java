@@ -362,7 +362,7 @@ public class JPlayers extends View implements KeyListener {
 		jUnassignedPlayers.setDropMode(DropMode.INSERT);
 		jUnassignedPlayers.setTransferHandler(new ListTransferHandler(
 				jUnassignedPlayers, mUnassignedPlayers, tournament
-						.getQualifying().getUnassigned(), tournament));
+						.getQualifying().getUnassigned(), tournament, this, main));
 		jUnassignedPlayers.setLayoutOrientation(JList.VERTICAL_WRAP);
 		jUnassignedPlayers.setVisibleRowCount(-1);
 
@@ -417,7 +417,7 @@ public class JPlayers extends View implements KeyListener {
 		jGroupedPlayers.setDropMode(DropMode.INSERT);
 		jGroupedPlayers.setTransferHandler(new ListTransferHandler(
 				jGroupedPlayers, mGroupedPlayers, tournament.getQualifying()
-						.getGroups().get(0).getPlayers(), tournament));
+						.getGroups().get(0).getPlayers(), tournament, this, main));
 		jGroupedPlayers.setLayoutOrientation(JList.VERTICAL_WRAP);
 		jGroupedPlayers.setVisibleRowCount(-1);
 
@@ -694,13 +694,13 @@ public class JPlayers extends View implements KeyListener {
 		if (jGroups.getSelectedItem() != null) {
 			jGroupedPlayers.setTransferHandler(new ListTransferHandler(
 					jGroupedPlayers, mGroupedPlayers, ((Group) jGroups
-							.getSelectedItem()).getPlayers(), tournament));
+							.getSelectedItem()).getPlayers(), tournament, this, main));
 			for (Player p : ((Group) jGroups.getSelectedItem()).getPlayers())
 				mGroupedPlayers.addElement(p);
 		} else
 			jGroupedPlayers.setTransferHandler(new ListTransferHandler(
 					jGroupedPlayers, mGroupedPlayers, tournament
-							.getQualifying().getUnassigned(), tournament));
+							.getQualifying().getUnassigned(), tournament, this, main));
 		jUnassignedPlayers.setModel(mUnassignedPlayers);
 		jGroupedPlayers.setModel(mGroupedPlayers);
 	}

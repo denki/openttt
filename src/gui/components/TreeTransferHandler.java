@@ -69,6 +69,7 @@ public class TreeTransferHandler extends TransferHandler {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		component.getParent().repaint();
 		return true;
 	}
 

@@ -146,7 +146,6 @@ public class JKnockOutBuilder2 extends View {
 						(int) (bnds1.y + .5 * bnds1.getHeight()));
 				points.add(p1);
 			}
-			System.out.println(points.size());
 			while (points.size() >= 2) {
 				List<Point> nPoints = new ArrayList<>();
 				for (int i = 0; i < points.size(); i += 2) {
@@ -207,7 +206,7 @@ public class JKnockOutBuilder2 extends View {
 		lPlayers.setCellRenderer(rnd);
 		lPlayers.setDropMode(DropMode.INSERT);
 		lPlayers.setTransferHandler(new ListTransferHandler(lPlayers, mPlayers,
-				players, main.getTournament()));
+				players, main.getTournament(), this, main));
 		lPlayers.setLayoutOrientation(JList.VERTICAL_WRAP);
 		lPlayers.setVisibleRowCount(-1);
 
@@ -260,6 +259,12 @@ public class JKnockOutBuilder2 extends View {
 		gbc.gridwidth = 3;
 		gbc.gridheight = 2;
 		add(treePan, gbc);
+		
+		if (!main.getTournament().getDoQualifying()) {
+			jOffset.setEnabled(false);
+			jToPlace.setEnabled(false);
+			jToPlace.setValue(main.getTournament().getQualifying().getGroups().get(0).getPlayers().size());
+		}
 
 		refresh();
 
@@ -271,7 +276,23 @@ public class JKnockOutBuilder2 extends View {
 
 	@Override
 	public String getIconEnabledPattern() {
-		return "1111001111";
+		if (isReady())
+			return "1111001111";
+		else
+			return "1111001110";
+	}
+
+	private boolean isReady() {
+		int i = 0;
+		int id;
+		if (treePan != null && treePan.labels != null)
+			for (JLabel lab : treePan.labels)
+				if (lab != null && lab.getTransferHandler() != null) {
+					id = ((TreeTransferHandler) lab.getTransferHandler()).getID();
+					if (id != -1)
+						i++;
+				}
+		return i >= 2;
 	}
 
 	@Override
