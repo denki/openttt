@@ -195,10 +195,15 @@ public class JKnockOutBuilder2 extends View {
 				JLabel cb2 = new JLabel("<html><strong>"
 						+ plr.getPlayerPlaceGroup() + ": </strong></html>");
 				cb2.setFont(cb.getFont().deriveFont(14));
-				JPanel pan = new JPanel();
+				JPanel pan = new JPanel(new GridBagLayout());
 				pan.setOpaque(false);
-				pan.add(cb2, BorderLayout.WEST);
-				pan.add(cb, BorderLayout.CENTER);
+				GridBagConstraints gbc = new GridBagConstraints();
+				gbc.fill = GridBagConstraints.BOTH;
+				gbc.weightx = 0;
+				pan.add(cb2, gbc);
+				gbc.gridx = 2;
+				gbc.weightx = 1;
+				pan.add(cb, gbc);
 				pan.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 10));
 				return pan;
 			}
