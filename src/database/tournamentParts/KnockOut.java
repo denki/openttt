@@ -90,15 +90,15 @@ public class KnockOut extends Commandable {
 	}
 
 	private void visitNodes() {
-		done = visitNodes(tree);
+		done = visitNodes(tree, 1);
 	}
 
-	private boolean visitNodes(Tree t) {
+	private boolean visitNodes(Tree t, double priority) {
 		if (!t.hasChildren())
 			return true;
 		boolean done = true;
 		for (Tree t1 : t.getChildren())
-			done = done & visitNodes(t1);
+			done = done & visitNodes(t1, priority / 2);
 
 		Player pl = players.get(t.getChildren().get(0));
 		Player pr = players.get(t.getChildren().get(1));
@@ -114,7 +114,7 @@ public class KnockOut extends Commandable {
 		if (matches.get(t) == null || !matches.get(t).getLeft().equals(pl)
 				|| !matches.get(t).getRight().equals(pr)) {
 			players.remove(t);
-			matches.put(t, newMatch(pl, pr));
+			matches.put(t, newMatch(pl, pr, priority));
 		}
 
 		// there exists a winner
@@ -126,8 +126,8 @@ public class KnockOut extends Commandable {
 		return done & (players.get(t) != null);
 	}
 
-	private Match newMatch(Player pl, Player pr) {
-		Match m = new Match(pl, pr);
+	private Match newMatch(Player pl, Player pr, double priority) {
+		Match m = new Match(priority, pl, pr);
 		Set<Player> plrs = new HashSet<Player>();
 		plrs.add(pl);
 		plrs.add(pr);

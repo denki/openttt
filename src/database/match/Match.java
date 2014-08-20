@@ -63,6 +63,18 @@ public class Match extends Edge<Player> implements Comparable<Match> {
 		this(0, -1, player, player2);
 	}
 
+	/**
+	 * Constructor
+	 * 
+	 * @param player
+	 *            Player on the left side
+	 * @param player2
+	 *            Player on the right side
+	 */
+	public Match(double d, Player player, Player player2) {
+		this(d, -1, player, player2);
+	}
+
 	private void addSentence(Game sentence) {
 		setUnsaved(true);
 		games.add(sentence);
