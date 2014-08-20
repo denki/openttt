@@ -155,7 +155,7 @@ public class ImportPlayers extends Watcher {
 			for (JComboBox<String> cb : columnAssociations) {
 				int idx = Arrays.asList(columnNames).indexOf(
 						cb.getSelectedItem());
-				if (idx != -1) {
+				if (idx != -1 && line.length > idx) {
 					toAdd.add(line[idx]);
 				} else {
 					toAdd.add("");

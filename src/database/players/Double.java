@@ -88,8 +88,6 @@ public class Double extends Player implements Serializable{
 
 	@Override
 	public String getFullName() {
-		if (pLeft.getClub().equals(pRight.getClub()))
-			return pLeft.getFullName().substring(0, pLeft.getFullName().indexOf(" (")) + " / " + pRight.getFullName();
 		return pLeft.getFullName() + " / " + pRight.getFullName();
 	}
 
@@ -110,7 +108,12 @@ public class Double extends Player implements Serializable{
 
 	@Override
 	public String getClub() {
-		return pLeft.getClub();
+		if (pLeft.getClub() == null && pRight.getClub() == null)
+			return null;
+		if (pLeft.getClub().equals(pRight.getClub()))
+			return pLeft.getClub();
+		else
+			return pLeft.getClub() + " / " + pRight.getClub();
 	}
 
 }
