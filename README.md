@@ -9,7 +9,7 @@ Requirements
 
 Download
 --------
-http://wwwpub.zih.tu-dresden.de/~s7480817/openttt.jar (2013-05-10)
+http://wwwpub.zih.tu-dresden.de/~s7480817/openttt.jar (2014-09-26)
 
 Compile
 -------
